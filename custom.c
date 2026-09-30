@@ -1,7 +1,7 @@
 /*
  * custom - interface for custom software and hardware interfaces
  *
- * Copyright (C) 1999-2006,2018,2021,2022  Landon Curt Noll
+ * Copyright (C) 1999-2006,2018,2021-2023,2026  Landon Curt Noll
  *
  * Calc is open software; you can redistribute it and/or modify it under
  * the terms of the version 2.1 of the GNU Lesser General Public License
@@ -9,7 +9,7 @@
  *
  * Calc is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
  * Public License for more details.
  *
  * A copy of version 2.1 of the GNU Lesser General Public License is
@@ -17,43 +17,38 @@
  * received a copy with calc; if not, write to Free Software Foundation, Inc.
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Under source code control:	1997/03/03 04:53:08
- * File existed as early as:	1997
+ * Under source code control:   1997/03/03 04:53:08
+ * File existed as early as:    1997
  *
- * chongo <was here> /\oo/\	http://www.isthe.com/chongo/
- * Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+ * chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+ * Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/
  */
 
-
-/* these include files are needed regardless of CUSTOM */
-#include "have_const.h"
-#include "value.h"
-#include "custom.h"
-
+/*
+ * important <system> header includes
+ */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+/*
+ * calc local src includes
+ */
+#include "value.h"
+#include "calc.h"
+#include "custom.h"
+#include "attribute.h"
+#include "errtbl.h"
+
+#include "banned.h" /* include after all other includes */
 
 #if defined(CUSTOM)
-
-#include "calc.h"
-
-#include "have_string.h"
-#ifdef HAVE_STRING_H
-# include <string.h>
+extern const struct custom cust[]; /* custom interface table */
 #endif
 
-#else /* CUSTOM */
-
-#include "config.h"
-
-#endif /* CUSTOM */
-
-
-#include "attribute.h"
-#include "banned.h"	/* include after system header <> includes */
-
-
-BOOL allow_custom = FALSE;	 /* TRUE => custom builtins allowed */
-
+bool allow_custom = false; /* true => custom builtins allowed */
 
 /*
  * custom - custom callout function
@@ -64,54 +59,71 @@ custom(char *name, int count, VALUE **vals)
 {
 #if defined(CUSTOM)
 
-	CONST struct custom *p;		/* current function */
+    const struct custom *p; /* current function */
 
-	/*
-	 * search the custom interface table for a function
-	 */
-	for (p = cust; p->name != NULL; ++p) {
+    /*
+     * error if libcustcalc was compiled with CUSTOM undefined
+     */
+    if (custom_compiled() != true) {
+        math_error("libcustcalc was compiled with CUSTOM undefined "
+                   "custom_compiled() returned: %d != %d",
+                   custom_compiled(), true);
+        not_reached();
+    }
 
-		/* look for the first match */
-		if (strcmp(name, p->name) == 0) {
+    /*
+     * search the custom interface table for a function
+     */
+    for (p = cust; p->name != NULL; ++p) {
 
-			/* arg count check */
-			if (count < p->minargs) {
-				math_error("Too few arguments for custom "
-				    "function \"%s\"", p->name);
-				not_reached();
-			}
-			if (count > p->maxargs) {
-				math_error("Too many arguments for custom "
-				    "function \"%s\"", p->name);
-				not_reached();
-			}
+        /* look for the first match */
+        if (strcmp(name, p->name) == 0) {
 
-			/* call the custom function */
-			return p->func(name, count, vals);
-		}
-	}
+            /* arg count check */
+            if (count < p->minargs) {
+                math_error("Too few arguments for custom "
+                           "function \"%s\"",
+                           p->name);
+                not_reached();
+            }
+            if (count > p->maxargs) {
+                math_error("Too many arguments for custom "
+                           "function \"%s\"",
+                           p->name);
+                not_reached();
+            }
 
-	/*
-	 * no such custom function
-	 */
-	return error_value(E_UNK_CUSTOM);
+            /* call the custom function */
+            return p->func(name, count, vals);
+        }
+    }
 
-#else /* CUSTOM */
+    /*
+     * no such custom function
+     */
+    return error_value(E_UNK_CUSTOM);
 
-	fprintf(stderr,
-	    "%sCalc was built with custom functions disabled\n",
-	    (conf->tab_ok ? "\t" : ""));
-	if (conf->calc_debug & CALCDBG_CUSTOM) {
-		fprintf(stderr,
-		    "%scustom function %s with %d args, %s vals not executed\n",
-		    (conf->tab_ok ? "\t" : ""), name, count,
-		    (vals == NULL) ? "NULL" : "non-NULL");
-	}
-	return error_value(E_NO_CUSTOM);
+#else
 
-#endif /* CUSTOM */
+    /*
+     * error if libcustcalc was compiled with CUSTOM defined
+     */
+    if (custom_compiled() != false) {
+        math_error("libcustcalc was compiled with CUSTOM defined "
+                   "custom_compiled() returned: %d != %d",
+                   custom_compiled(), false);
+        not_reached();
+    }
+
+    fprintf(stderr, "%sCalc was built with custom functions disabled\n", (conf->tab_ok ? "\t" : ""));
+    if (conf->calc_debug & CALCDBG_CUSTOM) {
+        fprintf(stderr, "%scustom function %s with %d args, %s vals not executed\n", (conf->tab_ok ? "\t" : ""), name, count,
+                (vals == NULL) ? "NULL" : "non-NULL");
+    }
+    return error_value(E_NO_CUSTOM);
+
+#endif
 }
-
 
 /*
  * showcustom - display the names and brief descriptions of custom functions
@@ -122,44 +134,42 @@ showcustom(void)
 {
 #if defined(CUSTOM)
 
-	CONST struct custom *p; /* current function */
+    const struct custom *p; /* current function */
 
-	/*
-	 * disable custom functions unless -C was given
-	 */
-	if (!allow_custom) {
-		fprintf(stderr,
-		    "%sCalc must be run with a -C argument to "
-		    "show custom functions\n",
-		    (conf->tab_ok ? "\t" : ""));
-		return;
-	}
+    /*
+     * disable custom functions unless -C was given
+     */
+    if (!allow_custom) {
+        fprintf(stderr,
+                "%sCalc must be run with a -C argument to "
+                "show custom functions\n",
+                (conf->tab_ok ? "\t" : ""));
+        return;
+    }
 
-	/*
-	 * print header
-	 */
-	printf("\nName\tArgs\tDescription\n\n");
-	for (p = cust; p->name != NULL; ++p) {
-		printf("%-9s ", p->name);
-		if (p->maxargs == MAX_CUSTOM_ARGS)
-			printf("%d+    ", p->minargs);
-		else if (p->minargs == p->maxargs)
-			printf("%-6d", p->minargs);
-		else
-			printf("%d-%-4d", p->minargs, p->maxargs);
-		printf("%s\n", p->desc);
-	}
-	printf("\n");
+    /*
+     * print header
+     */
+    printf("\nName\tArgs\tDescription\n\n");
+    for (p = cust; p->name != NULL; ++p) {
+        printf("%-9s ", p->name);
+        if (p->maxargs == MAX_CUSTOM_ARGS) {
+            printf("%d+    ", p->minargs);
+        } else if (p->minargs == p->maxargs) {
+            printf("%-6d", p->minargs);
+        } else {
+            printf("%d-%-4d", p->minargs, p->maxargs);
+        }
+        printf("%s\n", p->desc);
+    }
+    printf("\n");
 
-#else /* CUSTOM */
+#else
 
-	fprintf(stderr,
-	    "%sCalc was built with custom functions disabled\n",
-	    (conf->tab_ok ? "\t" : ""));
+    fprintf(stderr, "%sCalc was built with custom functions disabled\n", (conf->tab_ok ? "\t" : ""));
 
-#endif /* CUSTOM */
+#endif
 }
-
 
 /*
  * customhelp - standard help interface to a custom function
@@ -176,7 +186,7 @@ showcustom(void)
  * and HELPDIR file and work directly with the custom help file.
  *
  * given:
- *	name	name of the custom help file to directly access
+ *      name    name of the custom help file to directly access
  */
 /*ARGSUSED*/
 void
@@ -184,48 +194,44 @@ customhelp(char *name)
 {
 #if defined(CUSTOM)
 
-	char *customname;	/* a string of the form: custom/name */
-	size_t snprintf_len;	/* malloced snprintf buffer length */
+    char *customname;    /* a string of the form: custom/name */
+    size_t snprintf_len; /* malloced snprintf buffer length */
 
-	/*
-	 * firewall
-	 */
-	if (name == NULL) {
-		name = "help";
-	}
+    /*
+     * firewall
+     */
+    if (name == NULL) {
+        name = "help";
+    }
 
-	/*
-	 * form the custom help name
-	 */
-	snprintf_len = sizeof("custhelp")+1+strlen(name)+1;
-	customname = (char *)malloc(snprintf_len+1);
-	if (customname == NULL) {
-		math_error("bad malloc of customname");
-		not_reached();
-	}
-	snprintf(customname, snprintf_len, "custhelp/%s", name);
-	customname[snprintf_len] = '\0';	/* paranoia */
+    /*
+     * form the custom help name
+     */
+    snprintf_len = sizeof("custhelp") + 1 + strlen(name) + 1;
+    customname = (char *)calloc(snprintf_len + 1, 1);
+    if (customname == NULL) {
+        math_error("bad malloc of customname");
+        not_reached();
+    }
+    snprintf(customname, snprintf_len, "custhelp/%s", name);
+    customname[snprintf_len] = '\0'; /* paranoia */
 
-	/*
-	 * give help directly to the custom file
-	 */
-	givehelp(customname);
+    /*
+     * give help directly to the custom file
+     */
+    givehelp(customname);
 
-	/*
-	 * all done
-	 */
-	free(customname);
+    /*
+     * all done
+     */
+    free(customname);
 
-#else /* CUSTOM */
+#else
 
-	fprintf(stderr,
-	    "%sCalc was built with custom functions disabled\n",
-	    (conf->tab_ok ? "\t" : ""));
-	if (conf->calc_debug & CALCDBG_CUSTOM) {
-	    fprintf(stderr, "%scustom help for %s unavailable\n",
-		(conf->tab_ok ? "\t" : ""),
-		((name == NULL) ? "((NULL))" : name));
-	}
+    fprintf(stderr, "%sCalc was built with custom functions disabled\n", (conf->tab_ok ? "\t" : ""));
+    if (conf->calc_debug & CALCDBG_CUSTOM) {
+        fprintf(stderr, "%scustom help for %s unavailable\n", (conf->tab_ok ? "\t" : ""), ((name == NULL) ? "((NULL))" : name));
+    }
 
-#endif /* CUSTOM */
+#endif
 }

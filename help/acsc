@@ -5,31 +5,75 @@ SYNOPSIS
     acsc(x [,eps])
 
 TYPES
-    x		real, with absolute value >= 1
-    eps		nonzero real, defaults to epsilon()
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
 
-    return	real
+    return      real
 
 DESCRIPTION
-    Returns the acsc of x to a multiple of eps with error less in
+    Returns the inverse trigonometric cosecant of x to a multiple of eps with error less in
     absolute value than .75 * eps.
 
-    v = acsc(x) is the number in [-pi/2, pi/2] for which csc(v) = x.
+    This function is sometimes called arccsc.
 
 EXAMPLE
-    ; print acsc(2, 1e-5), acsc(2, 1e-10), acsc(2, 1e-15), acsc(2, 1e-20)
-    0.5236 0.5235987756 0.523598775598299 0.52359877559829887308
+    ; print acsc(0), acsc(0.5), acsc(1)
+    Error E_ACSC_3 1.57079632679489661923-1.31695789692481670863i 1.57079632679489661923
+
+    ; print acsc(-0.5), acsc(-1)
+    -1.57079632679489661923+1.31695789692481670863i -1.57079632679489661923
+
+    ; print acsc(.5, 1e-5), acsc(.5, 1e-10), acsc(.5, 1e-15)
+    1.5708-1.31696i 1.5707963268-1.3169578969i 1.570796326794897-1.316957896924817i
+
+    ; print acsc(.5, 1e-20)
+    1.57079632679489661923-1.31695789692481670863i
+
+    ; print acsc(5), acsc(5i)
+    0.20135792079033079145 -0.19869011034924140648i
+
+    ; print acsc(5+5i)
+    0.09966370285979516002-0.10033029811220500594i
+
+    ; pi = pi(1e-20)
+    ; print acsc(pi/6), acsc(pi/3)
+    1.57079632679489661923-1.26327680856656556834i 1.2694227170496051647
+
+    ; print acsc(4*pi/3)
+    0.24106031273407362824
 
 LIMITS
-    none
+    0 < eps < 1
 
 LINK LIBRARY
     NUMBER *qacsc(NUMBER *x, NUMBER *eps)
+    COMPLEX *c_acsc(COMPLEX *c, NUMBER *epsilon)
 
 SEE ALSO
-    asin, acos, atan, asec, acot, epsilon
+    sin, cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec
+    versin, coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    haversin, hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd, acrd
+    cas, cis
+    epsilon
 
-## Copyright (C) 1999,2021  Landon Curt Noll
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 1999,2021,2023  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -37,7 +81,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -45,8 +89,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1995/11/13 03:49:00
-## File existed as early as:	1995
+## Under source code control:   1995/11/13 03:49:00
+## File existed as early as:    1995
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

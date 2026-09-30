@@ -5,11 +5,11 @@ SYNOPSIS
     power(x, y, [, eps])
 
 TYPES
-    x		number
-    y		number
-    eps		nonzero real, defaults to epsilon()
+    x           number
+    y           number
+    eps         nonzero real, defaults to epsilon()
 
-    return	number
+    return      number
 
 DESCRIPTION
     For real or complex x and y, power(x,y,eps) returns a real or
@@ -45,7 +45,7 @@ LIMITS
     except in the case of y = 0; power(0, 0, eps) is the multiple of
     eps nearest 1.
 
-    eps > 0
+    eps != 0
 
 LINK LIBRARY
     void powervalue(VALUE *x, VALUE *y, VALUE *eps, VALUE *result)
@@ -55,7 +55,7 @@ LINK LIBRARY
 SEE ALSO
     root
 
-## Copyright (C) 1999,2021  Landon Curt Noll
+## Copyright (C) 1999,2021,2023  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -63,7 +63,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -71,8 +71,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1995/10/25 04:03:46
-## File existed as early as:	1995
+## Under source code control:   1995/10/25 04:03:46
+## File existed as early as:    1995
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

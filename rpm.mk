@@ -1,9 +1,8 @@
-#!/bin/make
-#****h* calc/rpm.mk
+#!/usr/bin/env make
 #
 # rpm.mk - Makefile for building rpm packages for calc
 #
-# Copyright (C) 2003,2014,2021  Petteri Kettunen and Landon Curt Noll
+# Copyright (C) 2003,2014,2021,2023,2026  Petteri Kettunen and Landon Curt Noll
 #
 # Calc is open software; you can redistribute it and/or modify it under
 # the terms of the version 2.1 of the GNU Lesser General Public License
@@ -63,7 +62,7 @@
 
 # setup
 #
-SHELL= /bin/sh
+SHELL= bash
 RPMBUILD_TOOL= rpmbuild
 TARCH= x86_64
 RPMBUILD_OPTION= -ba --target=$(TARCH) --buildroot=${RPM_BUILD_ROOT}
@@ -76,7 +75,6 @@ RM= rm
 LS= ls
 CPIO= cpio
 CP= cp
-EGREP= egrep
 MKDIR= mkdir
 GREP= grep
 SORT= sort
@@ -136,10 +134,12 @@ V=@:
 all: ver_calc calc.spec
 	${V} echo '=-=-=-=-= rpm.mk start of $@ rule =-=-=-=-='
 	PROJECT_VERSION="`./ver_calc`"; \
+	PROJECT_VER="`./ver_calc -V`"; \
 	PROJECT_RELEASE="`${SED} -n \
 	    -e '/^Release:/s/^Release: *//p' calc.spec.in`"; \
 	$(MAKE) -f rpm.mk rpm \
 	    PROJECT_VERSION="$$PROJECT_VERSION" \
+	    PROJECT_VER="$$PROJECT_VER" \
 	    PROJECT_RELEASE="$$PROJECT_RELEASE" Q= S= E=
 	${V} echo '=-=-=-=-= rpm.mk end of $@ rule =-=-=-=-='
 
@@ -160,6 +160,7 @@ calc.spec: calc.spec.in ver_calc
 	${V} echo '=-=-=-=-= rpm.mk start of $@ rule =-=-=-=-='
 	${RM} -f calc.spec
 	${SED} -e 's/<<<PROJECT_VERSION>>>/'"`./ver_calc`"/g \
+	       -e 's/<<<PROJECT_VER>>>/'"`./ver_calc -V`"/g \
 	    calc.spec.in > calc.spec
 	${V} echo '=-=-=-=-= rpm.mk end of $@ rule =-=-=-=-='
 
@@ -169,11 +170,12 @@ srcpkg: make_rhdir
 	${V} echo RPM_TOP="${RPM_TOP}"
 	${V} echo RPM_BUILD_ROOT="${RPM_BUILD_ROOT}"
 	${V} echo PROJECT_VERSION="${PROJECT_VERSION}"
+	${V} echo PROJECT_VER="${PROJECT_VER}"
 	${V} echo PROJECT_RELEASE="${PROJECT_RELEASE}"
 	${RM} -rf "$(TMPDIR)/$(PROJECT)"
 	${FIND} . -depth -print | \
-	    ${EGREP} -v '/RCS|/CVS|/NOTES|/\.|\.out$$|\.safe$$\.tar\.bz2$$' | \
-	    ${EGREP} -v '/old[._-]|\.old$$|\.tar\.gz$$|/ver_calc$$' | \
+	    ${GREP} -E -v '/RCS|/CVS|/NOTES|/\.|\.out$$|\.safe$$\.tar\.bz2$$' | \
+	    ${GREP} -E -v '/old[._-]|\.old$$|\.tar\.gz$$|/ver_calc$$' | \
 	    LANG=C ${SORT} | \
 	    ${CPIO} -dumpv "$(TMPDIR)/$(PROJECT)"
 	${RM} -f "$(TMPDIR)/$(PROJECT)/Makefile"
@@ -187,17 +189,19 @@ srcpkg: make_rhdir
 	${V} echo '=-=-=-=-= rpm.mk end of $@ rule =-=-=-=-='
 
 .PHONY: rpm
-rpm: srcpkg calc.spec
+rpm: srcpkg make_rhdir calc.spec
 	${V} echo '=-=-=-=-= rpm.mk start of $@ rule =-=-=-=-='
 	${V} echo RPM_TOP="${RPM_TOP}"
 	${V} echo RPM_BUILD_ROOT="${RPM_BUILD_ROOT}"
 	${V} echo PROJECT_VERSION="${PROJECT_VERSION}"
+	${V} echo PROJECT_VER="${PROJECT_VER}"
 	${V} echo PROJECT_RELEASE="${PROJECT_RELEASE}"
 	$(MAKE) -f Makefile clean Q= S= E=
 	${CP} "$(SPECFILE)" "$(RPM_TOP)/SPECS/$(SPECFILE)"
 	${RM} -f "$(RPM_TOP)/RPMS/$(TARCH)/$(RPMx86_64)"
 	${RM} -f "$(RPM_TOP)/RPMS/$(TARCH)/$(DRPMx86_64)"
 	${RM} -f "$(RPM_TOP)/SRPMS/$(SRPM)"
+	$(MAKE) -f rpm.mk make_rhdir   # <-- Re-ensure directories/tmp exist right before build
 	${RPMBUILD_TOOL} ${RPMBUILD_OPTION} "$(RPM_TOP)/SPECS/$(SPECFILE)"
 	@if [ ! -f "$(RPM_TOP)/SRPMS/$(SRPM)" ]; then \
 	    echo "SRPMS/$(SRPM) not found" 1>&2; \
@@ -212,6 +216,7 @@ make_rhdir:
 	${V} echo RPM_TOP="${RPM_TOP}"
 	${V} echo RPM_BUILD_ROOT="${RPM_BUILD_ROOT}"
 	${V} echo PROJECT_VERSION="${PROJECT_VERSION}"
+	${V} echo PROJECT_VER="${PROJECT_VER}"
 	${V} echo PROJECT_RELEASE="${PROJECT_RELEASE}"
 	for subdir in "" BUILD RPMS SOURCES SPECS SRPMS tmp; do \
 	    i="$(RPM_TOP)/$$subdir"; \
@@ -278,8 +283,8 @@ chkpkg:
 .PHONY: chksys
 chksys:
 	${V} echo '=-=-=-=-= rpm.mk start of $@ rule =-=-=-=-='
-	${RPM_TOOL} -qa | ${GREP} "$(PROJECT_NAME)"
-	${RPM_TOOL} -qa | ${GREP} "$(PROJECT_NAME)-devel"
+	${RPM_TOOL} -qa | ${GREP} -E "$(PROJECT_NAME)"
+	${RPM_TOOL} -qa | ${GREP} -E "$(PROJECT_NAME)-devel"
 	${V} echo '=-=-=-=-= rpm.mk end of $@ rule =-=-=-=-='
 
 .PHONY: test
@@ -289,7 +294,10 @@ test: ver_calc
 	    echo "test needs to install, must be root to test" 1>&2; \
 	    exit 6; \
 	fi
-	$(MAKE) -f rpm.mk PROJECT_VERSION="`./ver_calc`" installrpm \
+	$(MAKE) -f rpm.mk \
+		PROJECT_VERSION="`./ver_calc`" \
+		PROJECT_VER="`./ver_calc -V`" \
+		installrpm \
 		chksys Q= S= E=
 	${V} echo '=-=-=-=-= rpm.mk end of $@ rule =-=-=-=-='
 

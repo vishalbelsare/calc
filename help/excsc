@@ -1,0 +1,88 @@
+NAME
+    excsc - exterior trigonometric secant
+
+SYNOPSIS
+    excsc(x [,eps])
+
+TYPES
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
+
+    return      real
+
+DESCRIPTION
+    Calculate the exterior trigonometric secant of x to a multiple of eps, with error less
+    in absolute value than .75 * eps.
+
+    This function is equivalent to:
+
+        excsc(x) = csc(x) - 1
+
+EXAMPLE
+    ; print excsc(1/2), excsc(5/7), excsc(42/7)
+    1.08582964293348818577 0.52653601091884339347 -4.57889954725440563736
+
+    ; print excsc(1, 1e-5), excsc(1, 1e-10), excsc(1, 1e-15), excsc(1, 1e-20)
+    0.1884 0.1883951058 0.188395105778121 0.18839510577812121626
+
+    ; print excsc(2 + 3i, 1e-5), excsc(2 + 3i, 1e-10)
+    ~-0.90952681844549563690+~0.04120099965201690801i ~-0.90952679024696767497+~0.04120098628887626238i
+
+    ; pi = pi(1e-20)
+    ; print excsc(pi/6), excsc(pi/2), excsc(pi)
+    1 0 378303066284076833725.92240766640467212978
+
+    ; # NOTE: The huge value for excsc(pi) is because the pi variable is not exactly pi.
+
+LIMITS
+    0 < eps < 1
+
+LINK LIBRARY
+    NUMBER *qexcsc(NUMBER *x, NUMBER *eps)
+    COMPLEX *c_excsc(COMPLEX *c, NUMBER *eps)
+
+SEE ALSO
+    sin, cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    versin, coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    haversin, hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, aexcsc
+    crd, acrd
+    cas, cis
+    epsilon
+
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 2023  Landon Curt Noll
+##
+## Calc is open software; you can redistribute it and/or modify it under
+## the terms of the version 2.1 of the GNU Lesser General Public License
+## as published by the Free Software Foundation.
+##
+## Calc is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+## Public License for more details.
+##
+## A copy of version 2.1 of the GNU Lesser General Public License is
+## distributed with calc under the filename COPYING-LGPL.  You should have
+## received a copy with calc; if not, write to Free Software Foundation, Inc.
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## Under source code control:   2023/09/30 23:19:00
+## File existed as early as:    2023
+##
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

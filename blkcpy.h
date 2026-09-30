@@ -1,7 +1,7 @@
 /*
  * blkcpy - general values and related routines used by the calculator
  *
- * Copyright (C) 1999-2007,2014  Landon Curt Noll and Ernest Bowen
+ * Copyright (C) 1999-2007,2014,2026  Landon Curt Noll and Ernest Bowen
  *
  * Primary author:  Landon Curt Noll
  *
@@ -11,7 +11,7 @@
  *
  * Calc is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
  * Public License for more details.
  *
  * A copy of version 2.1 of the GNU Lesser General Public License is
@@ -19,40 +19,39 @@
  * received a copy with calc; if not, write to Free Software Foundation, Inc.
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Under source code control:	1997/04/18 20:41:25
- * File existed as early as:	1997
+ * Under source code control:   1997/04/18 20:41:25
+ * File existed as early as:    1997
  *
- * Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+ * Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/
  */
 
-
 #if !defined(INCLUDE_BLKCPY_H)
-#define INCLUDE_BLKCPY_H
+#  define INCLUDE_BLKCPY_H
 
 /*
  * the main copy gateway function
  */
-E_FUNC int copystod(VALUE *, long, long, VALUE *, long);
+extern int copystod(VALUE *, LEN, LEN, VALUE *, LEN);
 
 /*
  * specific copy functions
  */
-E_FUNC int copyblk2blk(BLOCK *, long, long, BLOCK *, long, BOOL);
-E_FUNC int copyblk2file(BLOCK *, long, long, FILEID, long);
-E_FUNC int copyblk2mat(BLOCK *, long, long, MATRIX *, long);
-E_FUNC int copyblk2num(BLOCK *, long, long, NUMBER *, long, NUMBER **);
-E_FUNC int copyblk2str(BLOCK *, long, long, STRING *, long);
-E_FUNC int copyfile2blk(FILEID, long, long, BLOCK *, long, BOOL);
-E_FUNC int copylist2list(LIST *, long, long, LIST *, long);
-E_FUNC int copylist2mat(LIST *, long, long, MATRIX *, long);
-E_FUNC int copymat2blk(MATRIX *, long, long, BLOCK *, long, BOOL);
-E_FUNC int copymat2list(MATRIX *, long, long, LIST *, long);
-E_FUNC int copymat2mat(MATRIX *, long, long, MATRIX *, long);
-E_FUNC int copynum2blk(NUMBER *, long, long, BLOCK *, long, BOOL);
-E_FUNC int copyostr2blk(char *, long, long, BLOCK *, long, BOOL);
-E_FUNC int copyostr2str(char *, long, long, STRING *, long);
-E_FUNC int copystr2blk(STRING *, long, long, BLOCK *, long, BOOL);
-E_FUNC int copystr2file(STRING *, long, long, FILEID, long);
-E_FUNC int copystr2str(STRING *, long, long, STRING *, long);
+extern int copyblk2blk(BLOCK *, LEN, LEN, BLOCK *, LEN, bool);
+extern int copyblk2file(BLOCK *, LEN, LEN, FILEID, LEN);
+extern int copyblk2mat(BLOCK *, LEN, LEN, MATRIX *, LEN);
+extern int copyblk2num(BLOCK *, LEN, LEN, NUMBER *, LEN, NUMBER **);
+extern int copyblk2str(BLOCK *, LEN, LEN, STRING *, LEN);
+extern int copyfile2blk(FILEID, LEN, LEN, BLOCK *, LEN, bool);
+extern int copylist2list(LIST *, LEN, LEN, LIST *, LEN);
+extern int copylist2mat(LIST *, LEN, LEN, MATRIX *, LEN);
+extern int copymat2blk(MATRIX *, LEN, LEN, BLOCK *, LEN, bool);
+extern int copymat2list(MATRIX *, LEN, LEN, LIST *, LEN);
+extern int copymat2mat(MATRIX *, LEN, LEN, MATRIX *, LEN);
+extern int copynum2blk(NUMBER *, LEN, LEN, BLOCK *, LEN, bool);
+extern int copyostr2blk(char *, LEN, LEN, BLOCK *, LEN, bool);
+extern int copyostr2str(char *, LEN, LEN, STRING *, LEN);
+extern int copystr2blk(STRING *, LEN, LEN, BLOCK *, LEN, bool);
+extern int copystr2file(STRING *, LEN, LEN, FILEID, LEN);
+extern int copystr2str(STRING *, LEN, LEN, STRING *, LEN);
 
-#endif /* !INCLUDE_BLKCPY_H */
+#endif

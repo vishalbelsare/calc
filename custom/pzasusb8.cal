@@ -1,7 +1,7 @@
 /*
  * pzasusb8 - print numerator as a string of USB8s
  *
- * Copyright (C) 1999,2004,2021  Ernest Bowen and Landon Curt Noll
+ * Copyright (C) 1999,2004,2021,2026  Ernest Bowen and Landon Curt Noll
  *
  * Primary author:  Ernest Bowen
  *
@@ -11,7 +11,7 @@
  *
  * Calc is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
  * Public License for more details.
  *
  * A copy of version 2.1 of the GNU Lesser General Public License is
@@ -19,11 +19,11 @@
  * received a copy with calc; if not, write to Free Software Foundation, Inc.
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Under source code control:	1999/10/06 03:11:12
- * File existed as early as:	1998
+ * Under source code control:   1999/10/06 03:11:12
+ * File existed as early as:    1998
  *
- * chongo <was here> /\oo/\	http://www.isthe.com/chongo/
- * Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+ * chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+ * Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/
  */
 
 
@@ -31,9 +31,9 @@
  * firewall
  */
 if (config("compile_custom") == 0) {
-	quit "calc compiled without -DCUSTOM";
+        quit "calc compiled without -DCUSTOM";
 } else if (config("allow_custom") == 0) {
-	quit "calc was run without the -D command line option";
+        quit "calc was run without the -D command line option";
 }
 
 print "p(n) prints array in which numerator of n is stored as a";
@@ -54,8 +54,8 @@ h(n);
 print "";
 print "BASEB: ", custom("sysinfo", "BASEB");
 print "CALC_BYTE_ORDER: ", custom("sysinfo", "CALC_BYTE_ORDER");
-print "BIG_ENDIAN: ", custom("sysinfo", "BIG_ENDIAN");
-print "LITTLE_ENDIAN: ", custom("sysinfo", "LITTLE_ENDIAN");
+print "CALC_BIG_ENDIAN: ", custom("sysinfo", "CALC_BIG_ENDIAN");
+print "CALC_LITTLE_ENDIAN: ", custom("sysinfo", "CALC_LITTLE_ENDIAN");
 print "LONG_BITS: ", custom("sysinfo", "LONG_BITS");
 print "Calc sizes:";
 show sizes;

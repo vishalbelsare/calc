@@ -1,7 +1,7 @@
 #
 # calc.spec.in - template specfile for calc
 #
-# Copyright (C) 2003-2014,2021  Petteri Kettunen and Landon Curt Noll
+# Copyright (C) 2003-2014,2021,2023,2026  Petteri Kettunen and Landon Curt Noll
 #
 # Calc is open software; you can redistribute it and/or modify it under
 # the terms of the version 2.1 of the GNU Lesser General Public License
@@ -9,7 +9,7 @@
 #
 # Calc is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+# or FITNESS FOR A PARTICULAR PURPOSE.   See the GNU Lesser General
 # Public License for more details.
 #
 # A copy of version 2.1 of the GNU Lesser General Public License is
@@ -17,26 +17,28 @@
 # received a copy with calc; if not, write to Free Software Foundation, Inc.
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-# Under source code control:	2003/02/16 20:21:39
-# File existed as early as:	2003
+# Under source code control:    2003/02/16 20:21:39
+# File existed as early as:     2003
 #
-# calculator by David I. Bell with help/mods from others
-# Makefile by Petteri Kettunen with modifications from Landon Curt Noll
+# This calculator first developed by David I. Bell with help/mods from others.
+#
+# chongo <was here> /\oo/\      http://www.isthe.com/chongo/
+# Share and enjoy!  :-)         http://www.isthe.com/chongo/tech/comp/calc/
 
 # BUGS
 #  - Uninstalling calc and calc-devel leaves empty dirs /usr/include/calc
-#    and /usr/share/calc and its subdirs. In case e.g. %{_includedir}/calc
+#    and /usr/share/calc and its subdirs. In case e.g., _includedir/calc
 #    is defined in `files devel' section, then rpmbuild complains that
 #    header files are defined twice - rpmbuild bug or bug in specfile conf???
 
 Summary: Arbitrary precision calculator.
 Name: calc
 Version: <<<PROJECT_VERSION>>>
-Release: 13
+Release: 16
 License: LGPL
 Group: Applications/Engineering
-Source: http://www.isthe.com/chongo/src/calc/%{name}-%{version}.tar.bz2
-URL: http://www.isthe.com/chongo/tech/comp/calc/index.html
+Source: https://github.com/lcn2/calc/releases/download/v<<<PROJECT_VERSION>>>/%{name}-%{version}.tar.bz2
+URL: https://github.com/lcn2/calc
 Vendor: Landon Noll and Associates
 Packager: Landon Noll and Associates (http://www.isthe.com/chongo/index.html)
 Requires: ncurses >= 5.5-24, readline >= 5.1-3, less >= 358
@@ -51,7 +53,11 @@ calculator, an algorithm prototype and mathematical research
 tool. Calc comes with a rich set of builtin mathematical and
 programming functions.
 
-For the latest calc release, see the calc project home page:
+For the latest calc release, see the calc GitHub repo:
+
+    https://github.com/lcn2/calc
+
+or the calc home page:
 
     http://www.isthe.com/chongo/tech/comp/calc/index.html
 
@@ -67,7 +73,11 @@ Requires: ncurses >= 5.5-24, readline >= 5.1-3, less >= 358
 This package contains the header files and static libraries for developing
 calc (arbitrary precision calculator).
 
-For the latest calc release, see the project home page:
+For the latest calc release, see the calc GitHub repo:
+
+    https://github.com/lcn2/calc
+
+or the calc home page:
 
     http://www.isthe.com/chongo/tech/comp/calc/index.html
 
@@ -132,14 +142,11 @@ echo '-=- calc.spec ending make install -=-'
 
 %clean
 echo '-=- calc.spec beginning make clean -=-'
-rm -rf %{_tmppath}
-rm -rf %{_builddir}
-rm -rf %{_specdir}
 rm -rf %{_buildrootdir}
 echo '-=- calc.spec beginning make clean -=-'
 
 %files
-%defattr(-, root, root)
+%defattr(-, root, root, -)
 %doc BUGS CHANGES COPYING COPYING-LGPL
 %attr(755, root, root) %{_bindir}/calc
 %attr(755, root, root) %{_bindir}/cscript/*
@@ -152,12 +159,14 @@ echo '-=- calc.spec beginning make clean -=-'
 %attr(644, root, root) %{_datadir}/%{name}/*.cal
 %attr(644, root, root) %{_datadir}/%{name}/set8700.line
 %attr(644, root, root) %{_libdir}/libcalc.so
+%attr(644, root, root) %{_libdir}/libcalc.so.<<<PROJECT_VER>>>
 %attr(644, root, root) %{_libdir}/libcalc.so.%{version}
 %attr(644, root, root) %{_libdir}/libcustcalc.so
+%attr(644, root, root) %{_libdir}/libcustcalc.so.<<<PROJECT_VER>>>
 %attr(644, root, root) %{_libdir}/libcustcalc.so.%{version}
 
 %files devel
-%defattr(-, root, root)
+%defattr(-, root, root, -)
 %doc BUGS COPYING COPYING-LGPL LIBRARY
 %attr(755, root, root) %{_bindir}/calc-static
 %attr(644, root, root) %{_includedir}/calc/*
@@ -165,6 +174,21 @@ echo '-=- calc.spec beginning make clean -=-'
 %attr(644, root, root) %{_libdir}/libcustcalc.a
 
 %changelog
+* Mon Sep 28 2026 Landon Curt Noll http://www.isthe.com/chongo
+- Release: 16
+- Fix the %clean section so that %{_tmppath} isn't wiped out
+  mid-execution because rpmbuild relies it to write its script
+  return codes, among other things.
+
+* Fri May 15 2026 Landon Curt Noll http://www.isthe.com/chongo
+- Release: 15
+- Add missing 4th parameter to defattr
+
+* Mon Aug 14 2023 Landon Curt Noll http://www.isthe.com/chongo
+- Release: 14
+- Use Source and URL based on calc GitHub repo URLs.
+- Install dynamic shared libraries with 3-digit version numbers.
+
 * Sun Mar 24 2019 Landon Curt Noll http://www.isthe.com/chongo
 - Release: 13
 - Disable compiling with the default ARCH_CFLAGS= -march=native

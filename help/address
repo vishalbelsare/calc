@@ -5,9 +5,9 @@ SYNOPSIS
     &X
 
 TYPES
-    X		expression specifying an octet, lvalue, string or number
+    X           expression specifying an octet, lvalue, string or number
 
-    return	pointer
+    return      pointer
 
 DESCRIPTION
     &X returns the address at which information for determining the current
@@ -20,7 +20,7 @@ DESCRIPTION
     otherwise accessing, such a vacated address may be catastrophic.
 
     An octet is normally expressed by B[i] where B is a block and
-    0 <= i < sizeof(B).	 &B[i] then returns the address at which this
+    0 <= i < sizeof(B).  &B[i] then returns the address at which this
     octet is located until the block is freed or relocated.  Freeing
     of an unnamed block B occurs when a new value is assigned to B or
     when B ceases to exist; a named block B is freed by blkfree(B).
@@ -38,7 +38,7 @@ DESCRIPTION
     &X with that component or element depends only on the continued existence
     of the matrix or object.  For example, after
 
-	; mat A[3]
+        ; mat A[3]
 
     the addresses &A[0], &A[1], &A[2] locate the three elements
     of the matrix specified by A until another value is assigned to A, etc.
@@ -60,15 +60,15 @@ DESCRIPTION
     results refer to octets in the same block or existing components of the
     same matrix or object.  For example, immediately after
 
-	; mat A[10]
-	; p = &A[5]
+        ; mat A[10]
+        ; p = &A[5]
 
     it is permitted to use expressions like p + 4, p - 5, p++ .
 
     Strings defined literally have fixed addresses, e.g., after
 
-	; p = &"abc"
-	; A = "abc"
+        ; p = &"abc"
+        ; A = "abc"
 
     the address &*A of the value of A will be equal to p.
 
@@ -78,7 +78,7 @@ DESCRIPTION
     be usable only while the variables retain these defined values.
     For example, after
 
-	; B = C = strcat("a", "bc");
+        ; B = C = strcat("a", "bc");
 
     &*B and &*C will be different.  If p is defined by p = &*B, p should
     not be used after a new value is assigned to B, or B ceases to exist,
@@ -91,12 +91,12 @@ DESCRIPTION
     so long as the number remains associated with at least one function or
     lvalue.  For example, after
 
-	; x = 27;
-	; y = 3 * 9;
-	; define f(a) = 27 + a;
+        ; x = 27;
+        ; y = 3 * 9;
+        ; define f(a) = 27 + a;
 
     the three occurrences of 27 have the same address which may be displayed
-    by any of &27, &*x, &*y and &f(0).	If x and y are assigned
+    by any of &27, &*x, &*y and &f(0).  If x and y are assigned
     other values and f is redefined or undefined and the 27 has not been
     stored elsewhere (e.g. as the "old value" or in another function
     definition or as an element in an association), the address assigned at
@@ -105,17 +105,17 @@ DESCRIPTION
 
     When a function returns a number value, that number value is usually
     placed at a newly allocated address, even if an equal number is stored
-    elsewhere.	For example calls to f(a), as defined above, with the same
+    elsewhere.  For example calls to f(a), as defined above, with the same
     non-zero value for a will be assigned to different addresses as can be
     seen from printing &*A, &*B, &*C after
 
-	; A = f(2); B = f(2); C = f(2);
+        ; A = f(2); B = f(2); C = f(2);
 
     (the case of f(0) is exceptional since 27 + 0 simply copies the 27
     rather than creating a new number value).  Here it is clearly more
-    efficient to use
+    efficient to use:
 
-	; A = B = C = f(2);
+        ; A = B = C = f(2);
 
     which, not only performs the addition in f() only once, but stores the
     number values for A, B and C at the same address.
@@ -125,11 +125,74 @@ DESCRIPTION
     and number-pointer respectively, and 0 otherwise.
 
     The output when addresses are printed consists of a description (o_ptr,
-    v_ptr, s_ptr, n_ptr) followed by : and the address printed in
-    %p format.
+    v_ptr, s_ptr, n_ptr) followed by : and the address printed in %p format.
 
-    Iteration of & is not permitted; &&X causes a "non-variable operand"
-    scan error.
+    Iteration of & is not permitted; &(&X) causes a "Addressing
+    non-addressable type" scan error.
+
+RESTRICTIONS ON VALUE ADDRESS ARITHMETIC
+    Most arithmetic operations on addresses of values are not permitted.
+    For example one may not perform arithmetic operations (like +, ++,
+    -, --, *, /, etc.) on an address of a value with a numeric value.
+
+    The reason why most arithmetic operations were removed from calc
+    because arithmetic on addresses of calc objects could easily cause
+    calc to crash.  Consider this horrific expression that was allowed
+    in calc prior to version 2.16.0.0:
+
+        ; *((&.)+1e9)           /* INVALID: for calc version >= 2.16.0.0 */
+
+    Prior to calc version 2.16.0.0, some arithmetic operations on
+    addresses of values were permitted.  Starting with calc version
+    2.16.0.0, arithmetic operations between an addresses and an integer
+    will return an error code:
+
+        ; ++p;                  /* INVALID: will be set to E_INVALID_ADDR_OP */
+        ; r = q - 2;            /* INVALID: will be set to E_INVALID_ADDR_OP */
+
+    Adding two value addresses is NOT permitted:
+
+        ; mat A[3];
+        ; p = &A[1];
+        ; q = &A[2];
+        ; s = p + q;            /* INVALID: will be set to E_INVALID_ADDR_OP */
+
+    Subtracting two value addresses is permitted, however there is NO
+    guarantee that the address of a value will remain consistent across
+    calc runs.  Addresses of values depend on the circumstances of when
+    the calc values were formed.  For example:
+
+        ; a = 3; pa = &a;
+        ; /* ... stuff happens ... */
+        ; b = 5; pb = &b;
+        ; t = pa - pb;          /* permitted: value depends on circumstances */
+
+    Subtracting value addresses of components with the same compound
+    object, such as a matrix, is permitted.  For example:
+
+        ; mat M[10] = {0,1,2,3,4,5,6,7,8,9};
+        ; i = 4; j = 5;
+        ; p = &M[i]; q = &M[j];
+        ; v = p - q;            /* permitted: value depends on circumstances */
+
+    Comparison between two value addresses is permitted, however the
+    same caveats apply as to the subtracting of addresses:
+
+        ; if (p < q) {
+        ;;    print "permitted: p is less than q";
+        ;; } else if (p == q) {
+        ;;    print "permitted: p is equal to q";
+        ;; } else {
+        ;;    print "permitted: p is greater than q";
+        ;; }
+
+    PLEASE NOTE:
+
+        The above restrictions and caveats apply to addresses of values.
+        Such restrictions and caveats to NOT apply to the addresses of
+        octets, NOR to the addresses within strings.  If isptr(x) == 2,
+        then x is value-pointer and the above mentioned restrictions
+        and caveats apply it.
 
 EXAMPLE
     Addresses for particular systems may differ from those displayed here.
@@ -160,7 +223,7 @@ LINK LIBRARY
 SEE ALSO
     dereference, isptr
 
-## Copyright (C) 1999-2006,2021  Landon Curt Noll
+## Copyright (C) 1999-2006,2021,2025  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -168,7 +231,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -176,8 +239,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1997/09/06 20:03:34
-## File existed as early as:	1997
+## Under source code control:   1997/09/06 20:03:34
+## File existed as early as:    1997
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

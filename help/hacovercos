@@ -1,0 +1,87 @@
+NAME
+    hacovercos - half coversed trigonometric cosine
+
+SYNOPSIS
+    hacovercos(x [,eps])
+
+TYPES
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
+
+    return      number
+
+DESCRIPTION
+    Calculate the half coversed trigonometric cosine of x to a multiple of eps with error less in
+    absolute value than .75 * eps.
+
+    This function is sometimes called hacvc, or hacovercosine, is equivalent to:
+
+        hacovercos(x) = covercos(x) / 2
+        hacovercos(x) = (1 + sin(x)) / 2
+
+EXAMPLE
+    ; print hacovercos(1/2), hacovercos(5/7), hacovercos(42/7)
+    ~0.73971276930210150014 0.8275389485892592871 ~0.36029225090053706360
+
+    ; print hacovercos(1, 1e-5), hacovercos(1, 1e-10), hacovercos(1, 1e-15), hacovercos(1, 1e-20)
+    0.920735 0.9207354924 0.920735492403948 ~0.92073549240394825332
+
+    ; print hacovercos(2 + 3i, 1e-5), hacovercos(2 + 3i, 1e-10)
+    5.07725-2.084455i 5.07724957345-2.08445348i
+
+    ; pi = pi(1e-20)
+    ; print hacovercos(pi/6), hacovercos(pi/2), hacovercos(pi)
+    0.75 1 0.5
+
+LIMITS
+    0 < eps < 1
+
+LINK LIBRARY
+    NUMBER *qhacovercos(NUMBER *x, NUMBER *eps)
+    COMPLEX *c_hacovercos(COMPLEX *x, NUMBER *eps)
+
+SEE ALSO
+    sin, cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    versin, coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    haversin, hacoversin, havercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd, acrd
+    cas, cis
+    epsilon
+
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 2023  Landon Curt Noll
+##
+## Calc is open software; you can redistribute it and/or modify it under
+## the terms of the version 2.1 of the GNU Lesser General Public License
+## as published by the Free Software Foundation.
+##
+## Calc is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+## Public License for more details.
+##
+## A copy of version 2.1 of the GNU Lesser General Public License is
+## distributed with calc under the filename COPYING-LGPL.  You should have
+## received a copy with calc; if not, write to Free Software Foundation, Inc.
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## Under source code control:   2023/09/24 11:10:08
+## File existed as early as:    2023
+##
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

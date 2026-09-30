@@ -5,13 +5,13 @@ SYNOPSIS
     isrel(x, y)
 
 TYPES
-    x		int
-    y		int
+    x           int
+    y           int
 
-    return	int
+    return      int
 
 DESCRIPTION
-    Determine if x and y are relatively prime.	If gcd(x,y) == 1, then
+    Determine if x and y are relatively prime.  If gcd(x,y) == 1, then
     return 1, otherwise return 0.
 
 EXAMPLE
@@ -25,7 +25,7 @@ LIMITS
     none
 
 LINK LIBRARY
-    BOOL zrelprime(ZVALUE x, y)
+    bool zrelprime(ZVALUE x, y)
 
 SEE ALSO
     gcd,
@@ -34,7 +34,7 @@ SEE ALSO
     isobjtype, isodd, isprime, isrand, israndom, isreal,
     issimple, issq, isstr, istype
 
-## Copyright (C) 1999  Landon Curt Noll
+## Copyright (C) 1999,2026  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -42,7 +42,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -50,8 +50,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1994/10/21 02:21:30
-## File existed as early as:	1994
+## Under source code control:   1994/10/21 02:21:30
+## File existed as early as:    1994
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

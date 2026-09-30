@@ -1,0 +1,89 @@
+NAME
+    acrd - inverse trigonometric chord of a unit circle
+
+SYNOPSIS
+    acrd(x [,eps])
+
+TYPES
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
+
+    return      number
+
+DESCRIPTION
+    Calculate angle of unit circle chord of length x to a multiple of eps with error less in
+    absolute value than .75 * eps.
+
+    A chord of a circle is a straight line segment whose endpoints lie on a arc of a circle.
+    A chord extended infinitely on both directions into a line would produce a secant line.
+
+    This function is sometimes called chord, is equivalent to:
+
+        acrd(x) = 2 * asin(x / 2)
+
+EXAMPLE
+    ; print acrd(1/2), acrd(5/7), acrd(42/7)
+    0.50536051028415730696 0.73041444258073348124 3.14159265358979323846-3.52549434807817210092i
+
+    ; print acrd(1, 1e-5), acrd(1, 1e-10), acrd(1, 1e-15), acrd(1, 1e-20)
+    1.0472 1.0471975512 1.047197551196598 1.04719755119659774616
+
+    ; print acrd(2 + 3i, 1e-5), acrd(2 + 3i, 1e-10)
+    1.0472+2.63392i 1.0471975512+2.6339157938i
+
+    ; pi = pi(1e-20)
+    ; print acrd(pi/6), acrd(pi/2), acrd(pi)
+    0.52977229404847186194 1.80667822153302569472 3.14159265358979323846-2.04645495709510115864i
+
+LIMITS
+    0 < eps < 1
+
+LINK LIBRARY
+    NUMBER *qacrd(NUMBER *x, NUMBER *eps)
+    COMPLEX *c_acrd(COMPLEX *x, NUMBER *eps)
+
+SEE ALSO
+    sin, cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    haversin, hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd
+    cas, cis
+    epsilon
+
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 2023  Landon Curt Noll
+##
+## Calc is open software; you can redistribute it and/or modify it under
+## the terms of the version 2.1 of the GNU Lesser General Public License
+## as published by the Free Software Foundation.
+##
+## Calc is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+## Public License for more details.
+##
+## A copy of version 2.1 of the GNU Lesser General Public License is
+## distributed with calc under the filename COPYING-LGPL.  You should have
+## received a copy with calc; if not, write to Free Software Foundation, Inc.
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## Under source code control:   2023/10/02 16:49:42
+## File existed as early as:    2023
+##
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

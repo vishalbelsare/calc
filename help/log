@@ -1,20 +1,21 @@
 NAME
-    log	-  base 10 logarithm
+    log -  base 10 logarithm
 
 SYNOPSIS
     log(x [,eps])
 
 TYPES
-    x		nonzero real or complex
-    eps		nonzero real, defaults to epsilon()
+    x           nonzero real or complex
+    eps         0 < real < 1, defaults to epsilon()
 
-    return	real or complex
+    return      real or complex
 
 DESCRIPTION
     Approximate the base 10 logarithm function of x by a multiple of
     epsilon, the error having absolute value less than 0.75 * eps.
-    If n is a positive integer, log(x, 10^-n) will usually be correct
-    to the n-th decimal place.
+
+    If y is a positive integer, log(x, 10^-y) will usually be correct
+    to the y-th decimal place.
 
 EXAMPLE
     ; print log(10), log(100), log(1e10), log(1e500)
@@ -28,16 +29,16 @@ EXAMPLE
 
 LIMITS
     x != 0
-    eps > 0
+    0 < eps < 1
 
 LINK LIBRARY
     NUMBER *qlog(NUMBER *x, NUMBER *eps)
     COMPLEX *c_log(COMPLEX *x, NUMBER *eps)
 
 SEE ALSO
-    ln
+    ilog, ilogn, ilog10, ilog2, ln, log2, logn
 
-## Copyright (C) 2006  Landon Curt Noll
+## Copyright (C) 2006,2023  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -45,7 +46,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -53,8 +54,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	2006/05/06 23:56:04
-## File existed as early as:	2006
+## Under source code control:   2006/05/06 23:56:04
+## File existed as early as:    2006
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

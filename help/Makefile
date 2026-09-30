@@ -1,16 +1,10 @@
-#!/bin/make
+#!/usr/bin/env make
 #
 # help - makefile for calc help files
 #
-# Copyright (C) 1999-2006,2017,2021,2022  Landon Curt Noll
+# Copyright (C) 1999-2006,2017,2021-2023,2026  Landon Curt Noll
 #
-# SRC: help/Makefile
-#
-#	The "# SRC: ... - ..." comment line above indicates
-#	the origin of this file.
-#
-# IMPORTANT: Please see the section on Makefiles near the
-#	     bottom of the HOWTO.INSTALL file.
+# Suggestion: Read the ../HOWTO.INSTALL file.
 #
 # Calc is open software; you can redistribute it and/or modify it under
 # the terms of the version 2.1 of the GNU Lesser General Public License
@@ -29,183 +23,63 @@
 # Under source code control:	1991/07/23 06:47:57
 # File existed as early as:	1991
 #
+# This calculator first developed by David I. Bell with help/mods from others.
+#
 # chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-# Share and enjoy!  :-) http://www.isthe.com/chongo/tech/comp/calc/
-#
-# calculator by David I. Bell with help/mods from others
-# Makefile by Landon Curt Noll
+# Share and enjoy!  :-)		http://www.isthe.com/chongo/tech/comp/calc/
 
 
-# The shell used by this Makefile
-#
-# On some systems, /bin/sh is a rather reduced shell with
-# deprecated behavior.
-#
-# If your system has a up to date, bash shell, then
-# you may wish to use:
-#
-#	SHELL= /bin/bash
-#
-# On some systems such as macOS, the bash shell is very
-# far behind to the point where is cannot be depended on.
-# On such systems, the sh may be a much better alternative
-# shell for this Makefile to use:
-#
-#	SHELL= /bin/sh
-#
-SHELL= /bin/bash
-#SHELL= /bin/sh
-#if 0	/* start of skip for non-Gnu makefiles */
-ifeq ($(target),Darwin)
-SHELL:= /bin/zsh
-endif
-#endif	/* end of skip for non-Gnu makefiles */
+# SUGGESTION: Instead of modifying this file, consider adding
+#	      statements to modify, replace or append Makefile
+#	      variables in the ../Makefile.local file.
 
 
-####
-# Normally, the upper level makefile will set these values.  We provide
-# a default here just in case you want to build from this directory.
-####
-
-# PREFIX - Top level location for calc
-#
-# The PREFIX is often prepended to paths within calc and calc Makefiles.
-#
-# Starting with calc v2.13.0.1, nearly all Makefile places that used
-# /usr/local now use ${PREFIX}.  An exception is the olduninstall rule
-# and, of course, this section. :-)
-#
-# NOTE: The ${PREFIX} is not the same as ${T}.  The ${T} specifies
-#	a top level directory under which calc installs things.
-#	While usually ${T} is empty, it can be specific path
-#	as if calc where "chrooted" during an install.
-#	The ${PREFIX} value, during install, is a path between
-#	the top level ${T} install directory and the object
-#	such as an include file.
-#
-# NOTE: See also, ${T}, below.
-#
-# There are some paths that do NOT call under ${PREFIX}, such as
-# ${CALCPATH}, that include paths not under ${PREFIX}, but those
-# too are exceptions to this general rule.
-#
-# When in doubt, try:
-#
-#	PREFIX= /usr/local
-#
-PREFIX= /usr/local
-#PREFIX= /usr
-#PREFIX= /usr/global
+###########################################
+# Files used or included by this Makefile #
+###########################################
 
 # Normally certain files depend on the Makefile.  If the Makefile is
 # changed, then certain steps should be redone.  If MAKE_FILE is
 # set to Makefile, then these files will depend on Makefile.  If
-# MAKE_FILE is empty, then they wont.
+# MAKE_FILE is empty, then they won't.
 #
 # If in doubt, set MAKE_FILE to Makefile
 #
 MAKE_FILE= Makefile
 
-# Where the system include (.h) files are kept
+# Calc configuration and compile configuration values
 #
-# For DJGPP, select:
-#
-#	INCDIR= /dev/env/DJDIR/include
-#
-# If in doubt, set:
-#
-#	INCDIR= /usr/include
-#
+CONFIG_MKF= ../Makefile.config
 
-#INCDIR= /usr/local/include
-#INCDIR= /dev/env/DJDIR/include
-INCDIR= /usr/include
+# Host targets that are shared in common with both Makefile
+# and custom/Makefile.
+#
+TARGET_MKF= ../Makefile.target
 
-# where to install calc related things
+# Host target information.
 #
-# ${BINDIR}		where to install calc binary files
-# ${LIBDIR}		where calc link library (*.a) files are installed
-# ${CALC_SHAREDIR}	where to install calc help, .cal, startup, config files
-#
-# NOTE: The install rule prepends installation paths with ${T}, which
-#	by default is empty.  If ${T} is non-empty, then installation
-#	locations will be relative to the ${T} directory.
-#
-# For DJGPP, select:
-#
-#	BINDIR= /dev/env/DJDIR/bin
-#	LIBDIR= /dev/env/DJDIR/lib
-#	CALC_SHAREDIR= /dev/env/DJDIR/share/calc
-#
-# If in doubt, set:
-#
-#	BINDIR= /usr/bin
-#	LIBDIR= /usr/lib
-#	CALC_SHAREDIR= /usr/share/calc
-#
-#BINDIR= ${PREFIX}/bin
-#BINDIR= /dev/env/DJDIR/bin
-BINDIR= /usr/bin
+LOCAL_MKF= ../Makefile.local
 
-#LIBDIR= ${PREFIX}/lib
-#LIBDIR= /dev/env/DJDIR/lib
-LIBDIR= /usr/lib
+# The set of Makefiles
+#
+MK_SET= ${MAKE_FILE} ${CONFIG_MKF} ${TARGET_MKF} ${LOCAL_MKF}
 
-#CALC_SHAREDIR= ${PREFIX}/lib/calc
-#CALC_SHAREDIR= /dev/env/DJDIR/share/calc
-CALC_SHAREDIR= /usr/share/calc
 
-# By default, these values are based CALC_SHAREDIR, INCDIR, BINDIR
-# ---------------------------------------------------------------
-# ${HELPDIR}		where the help directory is installed
-# ${CALC_INCDIR}	where the calc include files are installed
-# ${SCRIPTDIR}		where calc shell scripts are installed
-#
-# NOTE: The install rule prepends installation paths with ${T}, which
-#	by default is empty.  If ${T} is non-empty, then installation
-#	locations will be relative to the ${T} directory.
-#
-# If in doubt, set:
-#
-#	HELPDIR= ${CALC_SHAREDIR}/help
-#	CALC_INCDIR= ${INCDIR}/calc
-#	SCRIPTDIR= ${BINDIR}/cscript
-#
-HELPDIR= ${CALC_SHAREDIR}/help
-CALC_INCDIR= ${INCDIR}/calc
-SCRIPTDIR= ${BINDIR}/cscript
+#######################################################
+# Calc configuration and compile configuration values #
+#######################################################
+include ${CONFIG_MKF}
 
-# T - top level directory under which calc will be installed
-#
-# The calc install is performed under ${T}, the calc build is
-# performed under /.	The purpose for ${T} is to allow someone
-# to install calc somewhere other than into the system area.
-#
-# For example, if:
-#
-#     BINDIR= /usr/bin
-#     LIBDIR= /usr/lib
-#     CALC_SHAREDIR= /usr/share/calc
-#
-# and if:
-#
-#     T= /var/tmp/testing
-#
-# Then the installation locations will be:
-#
-#     calc binary files:	/var/tmp/testing/usr/bin
-#     calc link library:	/var/tmp/testing/usr/lib
-#     calc help, .cal ...:	/var/tmp/testing/usr/share/calc
-#     ... etc ...		/var/tmp/testing/...
-#
-# If ${T} is empty, calc is installed under /, which is the same
-# top of tree for which it was built.  If ${T} is non-empty, then
-# calc is installed under ${T}, as if one had to chroot under
-# ${T} for calc to operate.
-#
-# If in doubt, use T=
-#
-T=
+
+###############################
+# host target section include #
+###############################
+include ${TARGET_MKF}
+
+
+##########################################################################
+#=-=-=-=-=- Be careful if you change something below this line -=-=-=-=-=#
+##########################################################################
 
 # Makefile debug
 #
@@ -221,6 +95,9 @@ T=
 # E= 2>/dev/null	silence command stderr during hsrc file formation
 # E=			full command stderr during hsrc file formation
 #
+# N= 2>/dev/null	silence command stderr during non-hsrc related actions
+# N=			full command stderr non-hsrc related actions
+#
 # V=@:	do not echo debug statements (quiet mode)
 # V=@	do echo debug statements (debug / verbose mode)
 #
@@ -233,117 +110,79 @@ S= >/dev/null 2>&1
 E= 2>/dev/null
 #E=
 #
+N= >/dev/null 2>&1
+#N=
+#
 #H=@:
 H=@
 #
 V=@:
 #V=@
 
-# standard tools
-#
-CAT= cat
-CHMOD= chmod
-CMP= cmp
-CP= cp
-FMT= fmt
-GREP= egrep
-ICFLAGS=
-ILDFLAGS=
-LCC= cc
-MKDIR= mkdir
-MV= mv
-RM= rm
-RMDIR= rmdir
-SED= sed
-SORT= sort
-TOUCH= touch
-TRUE= true
 
-# Some out of date operating systems require / want an executable to
-# end with a certain file extension.  Some compile systems such as
-# Cygwin build calc as calc.exe.  The EXT variable is used to denote
-# the extension required by such.
-#
-# EXT=				# normal Un*x / Linux / GNU/Linux systems
-# EXT=.exe			# Windows / Cygwin
-#
-# If in doubt, use EXT=
-#
-EXT=
-#EXT=.exe
+##################################
+# Files managed by this Makefile #
+##################################
 
-# Standard and Builtin help files
-#
-STD_HELP_FILES_1= intro overview help
+STD_HELP_FILES_1= intro overview
+BLT_HELP_FILES_1a= calc
+
 STD_HELP_FILES_2= assoc
-
-BLT_HELP_FILES_3= builtin man
-
-STD_HELP_FILES_4= command config custom define environment expression
-
+BLT_HELP_FILES_3= builtin
+STD_HELP_FILES_4= command config custom define environment
 BLT_HELP_FILES_5= errorcodes
-
-STD_HELP_FILES_6= file history interrupt list mat
-
+STD_HELP_FILES_6= expression file history interrupt list mat
 # because obj is built special (due to confusion with it as
 # a symlink for some built environments, we treat obj specially
 # and call it obj.file
 #
 SPECIAL_HELP_7= obj.file
-
-STD_HELP_FILES_8= operator statement
-
+STD_HELP_FILES_8= operator
 BLT_HELP_FILES_9= resource
+STD_HELP_FILES_10= script statement types unexpected variable
 
-STD_HELP_FILES_10= types script
-
-BLT_HELP_FILES_10a= usage cscript
-
-STD_HELP_FILES_10b= unexpected variable
-
-BLT_HELP_FILES_11= bindings custom_cal libcalc new_custom resource
+BLT_HELP_FILES_11= bindings custom_cal libcalc new_custom cscript
 
 STD_HELP_FILES_12= archive
+BLT_HELP_FILES_13= bugs changes contrib
+STD_HELP_FILES_14= todo wishlist
 
-BLT_HELP_FILES_13= bugs changes
+STD_HELP_FILES_15= credit
+# copyright is printed by help.c is from the Copyright string found in version.c
+BLT_HELP_FILES_16= COPYING COPYING-LGPL questions releases
 
-STD_HELP_FILES_14= credit
-
-BLT_HELP_FILES_14= contrib COPYING COPYING-LGPL questions releases
-
-STD_HELP_FILES_15= wishlist todo
+STD_HELP_FILES_17= help
 
 # These files are used in the following order to construct full
 #
-FULL_HELP_FILES= ${STD_HELP_FILES_1} ${STD_HELP_FILES_2} \
-		${BLT_HELP_FILES_3} ${STD_HELP_FILES_4} \
-		${BLT_HELP_FILES_5} ${STD_HELP_FILES_6} \
-		${SPECIAL_HELP_7} ${STD_HELP_FILES_8} \
-		${BLT_HELP_FILES_9} ${STD_HELP_FILES_10} \
-		${BLT_HELP_FILES_10a} ${STD_HELP_FILES_10b} \
-		${BLT_HELP_FILES_11} ${STD_HELP_FILES_12} \
-		${BLT_HELP_FILES_13} ${STD_HELP_FILES_14} \
-		${BLT_HELP_FILES_14} ${STD_HELP_FILES_15}
+FULL_HELP_FILES= ${STD_HELP_FILES_1} ${BLT_HELP_FILES_1a} \
+		 ${STD_HELP_FILES_2} \
+		 ${BLT_HELP_FILES_3}  ${STD_HELP_FILES_4} \
+		 ${BLT_HELP_FILES_5}  ${STD_HELP_FILES_6} \
+		 ${SPECIAL_HELP_7}    ${STD_HELP_FILES_8} \
+		 ${BLT_HELP_FILES_9}  ${STD_HELP_FILES_10} \
+		 ${BLT_HELP_FILES_11} ${STD_HELP_FILES_12} \
+		 ${BLT_HELP_FILES_13} ${STD_HELP_FILES_14} \
+		 ${STD_HELP_FILES_15} ${BLT_HELP_FILES_16} \
+		 ${STD_HELP_FILES_17}
 
 # These full files are those who are not built or constructed
 #
-STD_HELP_FILES= ${STD_HELP_FILES_1} ${STD_HELP_FILES_2} \
-		${STD_HELP_FILES_4} ${STD_HELP_FILES_6} \
-		${STD_HELP_FILES_8} ${STD_HELP_FILES_10} \
-		${STD_HELP_FILES_10b} \
+STD_HELP_FILES= ${STD_HELP_FILES_1}  ${STD_HELP_FILES_2} \
+		${STD_HELP_FILES_4}  ${STD_HELP_FILES_6} \
+		${STD_HELP_FILES_8}  ${STD_HELP_FILES_10} \
 		${STD_HELP_FILES_12} ${STD_HELP_FILES_14} \
-		${STD_HELP_FILES_15}
+		${STD_HELP_FILES_15} ${STD_HELP_FILES_17}
 
 # These full files are those who are built by this Makefile
 #
 # Note that ${SPECIAL_HELP_7} is not included in this list
 # because of problems with its name.
 #
-BLT_HELP_FILES= ${BLT_HELP_FILES_3} ${BLT_HELP_FILES_5} \
-		${BLT_HELP_FILES_9} \
-		${BLT_HELP_FILES_10a} \
-		${BLT_HELP_FILES_11} ${BLT_HELP_FILES_13} \
-		${BLT_HELP_FILES_14}
+BLT_HELP_FILES= ${BLT_HELP_FILES_1a} \
+		${BLT_HELP_FILES_3}  ${BLT_HELP_FILES_5} \
+		${BLT_HELP_FILES_9}  ${BLT_HELP_FILES_11} \
+		${BLT_HELP_FILES_13} ${BLT_HELP_FILES_16}
 
 # The detailed list of help files to install
 #
@@ -355,42 +194,45 @@ BLT_HELP_FILES= ${BLT_HELP_FILES_3} ${BLT_HELP_FILES_5} \
 #
 # to keep this list in nice sorted order.
 #
-DETAIL_HELP= abs access acos acosh acot acoth acsc acsch address agd \
-	append appr arg argv arrow asec asech asin asinh assign atan atan2 \
-	atanh avg base base2 bernoulli bit blk blkcpy blkfree blocks bround \
-	btrunc calc_tty calclevel calcpath catalan ceil cfappr cfsim char \
-	cmdbuf cmp comb conj cos cosh cot coth count cp csc csch ctime d2dm \
-	d2dms d2g d2r delete den dereference det digit digits display dms2d dp \
-	epsilon errcount errmax errno error estr euler eval exp fact factor \
-	fclose fcnt feof ferror fflush fgetc fgetfield fgetfile fgetline fgets \
-	fgetstr fib files floor fopen forall fpathopen fprintf fputc fputs \
-	fputstr frac free freebernoulli freeeuler freeglobals freeredc \
-	freestatics frem freopen fscan fscanf fseek fsize ftell g2d g2gm g2gms \
-	g2r gcd gcdrem gd getenv gms2g h2hm h2hms hash head highbit hmean \
-	hms2h hnrmod hypot ilog ilog10 ilog2 im indices inputlevel insert int \
-	inverse iroot isalnum isalpha isassoc isatty isblk iscntrl isconfig \
-	isdefined isdigit iserror iseven isfile isgraph ishash isident isint \
-	islist islower ismat ismult isnull isnum isobj isobjtype isodd isprime \
+DETAIL_HELP= abs access acos acosh acot acoth acovercos acoversin \
+	acrd acsc acsch address aexcsc aexsec agd ahacovercos ahacoversin \
+	ahavercos ahaversin append appr arg argv arrow asec asech asin asinh \
+	assign atan atan2 atanh avercos aversin avg base base2 bernoulli bit \
+	blk blkcpy blkfree blocks bround btrunc calc_tty calclevel calcpath \
+	cas catalan ceil cfappr cfsim char cis cmdbuf cmp comb conj cos cosh \
+	cot coth count covercos coversin cp crd csc csch ctime d2dm d2dms d2g \
+	d2r delete den dereference det digit digits display dms2d dp epsilon \
+	errcount errmax errno error errsym estr euler eval excsc exp exsec \
+	fact factor fclose fcnt feof ferror fflush fgetc fgetfield fgetfile \
+	fgetline fgets fgetstr fib files floor fopen forall fpathopen fprintf \
+	fputc fputs fputstr frac free freebernoulli freeeuler freeglobals \
+	freeredc freestatics frem freopen fscan fscanf fseek fsize ftell g2d \
+	g2gm g2gms g2r gcd gcdrem gd getenv gms2g h2hm h2hms hacovercos \
+	hacoversin hash havercos haversin head highbit hmean hms2h hnrmod \
+	hypot ilog ilog10 ilog2 im indices inputlevel insert int inverse iroot \
+	isalnum isalpha isassoc isatty isblk iscntrl isconfig isdefined \
+	isdigit iserror iseven isfile isgraph ishash isident isint islist \
+	islower ismat ismult isnull isnum isobj isobjtype isodd isprime \
 	isprint isptr ispunct isqrt isrand israndom isreal isrel issimple \
 	isspace issq isstr istype isupper isxdigit jacobi join lcm lcmfact \
-	lfactor ln log lowbit ltol makelist matdim matfill matmax matmin \
-	matsum mattrace mattrans max memsize meq min minv mmin mne mod modify \
-	name near newerror nextcand nextprime norm null num oldvalue ord param \
-	perm pfact pi pix places pmod polar poly pop popcnt pound power \
-	prevcand prevprime printf prompt protect ptest push putenv quo quomod \
-	r2d r2g rand randbit random randombit randperm rcin rcmul rcout rcpow \
-	rcsq re remove reverse rewind rm root round rsearch runtime saveval \
-	scale scan scanf search sec sech seed segment select sgn sha1 sin sinh \
-	size sizeof sleep sort sqrt srand srandom ssq stoponerror str \
+	lfactor ln log log2 logn lowbit ltol makelist matdim matfill matmax \
+	matmin matsum mattrace mattrans max memsize meq min minv mmin mne mod \
+	modify name near newerror nextcand nextprime norm null num oldvalue \
+	ord param perm pfact pi pix places pmod polar poly pop popcnt pound \
+	power prevcand prevprime printf prompt protect ptest push putenv quo \
+	quomod r2d r2g rand randbit random randombit randperm rcin rcmul rcout \
+	rcpow rcsq re remove reverse rewind rm root round rsearch runtime \
+	saveval scale scan scanf search sec sech seed segment select sgn sha1 \
+	sin sinh size sizeof sleep sort sqrt srand srandom ssq stoponerror str \
 	strcasecmp strcat strcmp strcpy strerror strlen strncasecmp strncmp \
 	strncpy strpos strprintf strscan strscanf strtolower strtoupper substr \
-	sum swap system systime tail tan tanh test time trunc usertime version \
-	xor
+	sum swap system systime tail tan tanh test time trunc usertime vercos \
+	versin version xor
 
 # This list is of files that are clones of DETAIL_HELP files.  They are
 # built from DETAIL_HELP files.
 #
-DETAIL_CLONE= copy
+DETAIL_CLONE= copy ilogn
 
 # Singular files
 #
@@ -402,19 +244,44 @@ SINGULAR_FILES= binding bug change errorcode type
 # These files are found (but not built) in the distribution
 #
 DISTLIST= ${STD_HELP_FILES} ${DETAIL_HELP} ${MAKE_FILE} \
-	obj.file builtin.top builtin.end funclist.sed \
-	errorcodes.hdr errorcodes.sed
+	obj.file builtin.top builtin.end funclist.sed
 
 # These files are used to make (but not built) a calc .a link library
 #
 CALCLIBLIST=
+
+# complete list of files that may be created as part of the build process
 #
+# Used by chk_tree via make prep
+#
+BUILD_ALL= ${BLT_HELP_FILES} ${SINGULAR_FILES} ${DETAIL_CLONE} \
+	   full funclist${EXT} funclist.c funclist.o
+
 # rules that are not also names of files
 #
-PHONY= all clobber distlist install
+PHONY= all distlist buildlist distdir calcliblist detail_help_list \
+	echo_inst_files clean clobber install uninstall
+
+
+############################################################
+# Allow Makefile.local to change any of the above settings #
+############################################################
+include ${LOCAL_MKF}
+
+
+###########################################
+# all - First and default Makefile target #
+###########################################
 
 all: ${FULL_HELP_FILES} full ${DETAIL_HELP} ${DETAIL_CLONE} \
      ${SINGULAR_FILES} .all
+
+
+###############################
+# additional Makefile targets #
+###############################
+
+.PHONY: ${PHONY}
 
 # used by the upper level Makefile to determine of we have done all
 #
@@ -424,8 +291,6 @@ all: ${FULL_HELP_FILES} full ${DETAIL_HELP} ${DETAIL_CLONE} \
 .all:
 	${RM} -f .all
 	${TOUCH} .all
-
-.PHONY: ${PHONY}
 
 bindings: ../cal/bindings
 	${RM} -f $@
@@ -500,10 +365,9 @@ contrib: ../CONTRIB-CODE
 	    ${TRUE}; \
 	fi
 
-errorcodes: ../calcerr.h errorcodes.hdr errorcodes.sed
+errorcodes: ../errcode${EXT}
 	${RM} -f $@
-	${CAT} errorcodes.hdr > $@
-	${SED} -n -f errorcodes.sed < ../calcerr.h >> $@
+	../errcode${EXT} -e > $@
 	${CHMOD} 0444 $@
 	-@if [ -z "${Q}" ]; then \
 	    echo ''; \
@@ -513,7 +377,7 @@ errorcodes: ../calcerr.h errorcodes.hdr errorcodes.sed
 	    ${TRUE}; \
 	fi
 
-usage: ../calc.usage
+calc: ../calc.usage
 	${RM} -f $@
 	${CP} ../calc.usage $@
 	${CHMOD} 0444 $@
@@ -555,18 +419,6 @@ new_custom: ../custom/HOW_TO_ADD
 copy: blkcpy
 	${RM} -f $@
 	${CP} blkcpy $@
-	${CHMOD} 0444 $@
-	-@if [ -z "${Q}" ]; then \
-	    echo ''; \
-	    echo '=-=-= skipping the ${CAT} of help/$@ =-=-='; \
-	    echo ''; \
-	else \
-	    ${TRUE}; \
-	fi
-
-man: help
-	${RM} -f $@
-	${CP} help $@
 	${CHMOD} 0444 $@
 	-@if [ -z "${Q}" ]; then \
 	    echo ''; \
@@ -641,6 +493,18 @@ releases: ../README.RELEASE
 	    ${TRUE}; \
 	fi
 
+ilogn: ilog
+	${RM} -f $@
+	${CP} ilog $@
+	${CHMOD} 0444 $@
+	-@if [ -z "${Q}" ]; then \
+	    echo ''; \
+	    echo '=-=-= skipping the ${CAT} of help/$@ =-=-='; \
+	    echo ''; \
+	else \
+	    ${TRUE}; \
+	fi
+
 full: ${FULL_HELP_FILES} ${MAKE_FILE}
 	${Q} echo "forming full"
 	${Q} ${RM} -f $@
@@ -673,8 +537,8 @@ full: ${FULL_HELP_FILES} ${MAKE_FILE}
 # Singular files are the same files as their plural form.
 #
 ${SINGULAR_FILES}: ${PLURAL_FILES}
-	${Q} for i in ${SINGULAR_FILES} /dev/null; do \
-	    if [ X"$$i" != X"/dev/null" ]; then \
+	${Q} for i in ${SINGULAR_FILES} __IGNORE__; do \
+	    if [ X"$$i" != X"__IGNORE__" ]; then \
 		echo "${RM} -f $${i}"; \
 		${RM} -f $${i}; \
 		echo "${CP} $${i}s $${i}"; \
@@ -716,7 +580,7 @@ builtin: builtin.top builtin.end ../func.c funclist.sed
 	    -I.. funclist.c -c ${S}
 	${Q} ${LCC} ${ILDFLAGS} funclist.o -o funclist${EXT} ${S}
 	${Q} ${RM} -f builtin
-	${Q} ${GREP} -v '^#'  builtin.top > builtin
+	${Q} ${GREP} -E -v '^#'  builtin.top > builtin
 	${Q} ./funclist${EXT} | \
 	    ${SED} -e 's/^/	/' -e 's/[	 ][	 ]*$$//' >> builtin
 	${Q} ${CAT} builtin.end >> builtin
@@ -740,8 +604,15 @@ builtin: builtin.top builtin.end ../func.c funclist.sed
 ##
 
 distlist: ${DISTLIST}
-	${Q} for i in ${DISTLIST} /dev/null; do \
-	    if [ X"$$i" != X"/dev/null" ]; then \
+	${Q} for i in ${DISTLIST} __IGNORE__; do \
+	    if [ X"$$i" != X"__IGNORE__" ]; then \
+		echo help/$$i; \
+	    fi; \
+	done | fgrep -v '.bak' | LANG=C ${SORT}
+
+buildlist:
+	${Q} for i in ${BUILD_ALL} __IGNORE__; do \
+	    if [ X"$$i" != X"__IGNORE__" ]; then \
 		echo help/$$i; \
 	    fi; \
 	done | fgrep -v '.bak' | LANG=C ${SORT}
@@ -750,8 +621,8 @@ distdir:
 	${Q} echo help
 
 calcliblist:
-	${Q} for i in ${CALCLIBLIST} /dev/null; do \
-	    if [ X"$$i" != X"/dev/null" ]; then \
+	${Q} for i in ${CALCLIBLIST} __IGNORE__; do \
+	    if [ X"$$i" != X"__IGNORE__" ]; then \
 		echo help/$$i; \
 	    fi; \
 	done
@@ -766,8 +637,7 @@ detail_help_list:
 		 ! -name archive ! -name assoc ! -name builtin.end \
 		 ! -name builtin.top ! -name command ! -name config \
 		 ! -name contrib ! -name credit ! -name custom ! -name define \
-		 ! -name environment ! -name errorcodes.hdr \
-		 ! -name errorcodes.sed ! -name expression ! -name file \
+		 ! -name environment ! -name expression ! -name file \
 		 ! -name funclist.c ! -name funclist.sed ! -name help \
 		 ! -name history ! -name interrupt ! -name intro ! -name list \
 		 ! -name mat ! -name obj.file ! -name operator \
@@ -776,10 +646,8 @@ detail_help_list:
 		 ! -name variable ! -name wishlist ! -name questions \
 		 -print | \
 	   while read i; do \
-		if [ X"$$i" != X"/dev/null" ]; then \
-		    echo $$i; \
-		fi; \
-	done; \
+	       echo $$i; \
+	   done; \
 	echo '--first_line--') | \
 	    ${SED} -e 's:^\./::' | LANG=C ${SORT} | ${FMT} -70 | \
 	    ${SED} -e '1s/--first_line--/DETAIL_HELP=/' -e '2,$$s/^/	/' \
@@ -793,8 +661,8 @@ detail_help_list:
 
 echo_inst_files:
 	${Q} for i in ${STD_HELP_FILES} full ${BLT_HELP_FILES} \
-		  builtin ${DETAIL_HELP} ${SINGULAR_FILES} /dev/null; do \
-	    if [ X"$$i" != X"/dev/null" ]; then \
+		  builtin ${DETAIL_HELP} ${SINGULAR_FILES} __IGNORE__; do \
+	    if [ X"$$i" != X"__IGNORE__" ]; then \
 		echo __file__ ${HELPDIR}/$$i; \
 	    fi; \
 	done
@@ -811,7 +679,7 @@ clean:
 	${RM} -f COPYING COPYING-LGPL questions
 
 clobber: clean
-	${RM} -f ${BLT_HELP_FILES} full .all calc
+	${RM} -f ${BLT_HELP_FILES} full .all calc man usage
 	${RM} -f ${SINGULAR_FILES} ${DETAIL_CLONE}
 	-${Q} if [ -e .DS_Store ]; then \
 	    echo ${RM} -rf .DS_Store; \
@@ -848,8 +716,8 @@ install: all
 	    ${TRUE}; \
 	fi
 	-${Q} for i in ${STD_HELP_FILES} ${BLT_HELP_FILES} builtin \
-		  full ${DETAIL_HELP} ${SINGULAR_FILES} /dev/null; do \
-	    if [ "$$i" = "/dev/null" ]; then \
+		  full ${DETAIL_HELP} ${SINGULAR_FILES} __IGNORE__; do \
+	    if [ "$$i" = "__IGNORE__" ]; then \
 		continue; \
 	    fi; \
 	    if ${CMP} -s $$i ${T}${HELPDIR}/$$i; then \
@@ -879,6 +747,14 @@ install: all
 	    ${RM} -f ${T}${HELPDIR}/md5; \
 	    echo "removed old ${T}${HELPDIR}/md5"; \
 	fi;
+	-${Q} if [ -f "${T}${HELPDIR}/man" ]; then \
+	    ${RM} -f ${T}${HELPDIR}/man; \
+	    echo "removed old ${T}${HELPDIR}/man"; \
+	fi;
+	-${Q} if [ -f "${T}${HELPDIR}/usage" ]; then \
+	    ${RM} -f ${T}${HELPDIR}/usage; \
+	    echo "removed old ${T}${HELPDIR}/usage"; \
+	fi;
 
 # Try to remove everything that was installed
 #
@@ -894,8 +770,8 @@ uninstall:
 	    fi; \
 	fi
 	-${Q} for i in ${SINGULAR_FILES} ${DETAIL_HELP} full builtin \
-	    ${BLT_HELP_FILES} ${STD_HELP_FILES} /dev/null; do \
-	    if [ "$$i" = "/dev/null" ]; then \
+	    ${BLT_HELP_FILES} ${STD_HELP_FILES} __IGNORE__; do \
+	    if [ "$$i" = "__IGNORE__" ]; then \
 		continue; \
 	    fi; \
 	    if [ -f "${T}${HELPDIR}/$$i" ]; then \
@@ -909,7 +785,7 @@ uninstall:
 	done
 	-${Q} for i in ${HELPDIR} ${CALC_SHAREDIR}; do \
 	    if [ -d "${T}$$i" ]; then \
-		${RMDIR} "${T}$$i" 2>/dev/null; \
+		${RMDIR} "${T}$$i" ${N}; \
 		echo "cleaned up ${T}$$i"; \
 	    fi; \
 	done

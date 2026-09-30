@@ -1,0 +1,93 @@
+NAME
+    aversin - inverse versed trigonometric sine
+
+SYNOPSIS
+    aversin(x [,eps])
+
+TYPES
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
+
+    return      real
+
+DESCRIPTION
+    Returns the inverse versed trigonometric sine of x to a multiple of eps with error less in
+    absolute value than .75 * eps.
+
+    This function is sometimes called avers, or arcversin, is equivalent to:
+
+        aversin(x) = acos(1 - x)
+
+EXAMPLE
+    ; print aversin(0), aversin(0.5), aversin(1)
+    0 1.04719755119659774615 1.57079632679489661923
+
+    ; print aversin(-0.5), aversin(-1)
+    0.96242365011920689498i 1.31695789692481670863i
+
+    ; print aversin(.5, 1e-5), aversin(.5, 1e-10), aversin(.5, 1e-15), aversin(.5, 1e-20)
+    1.0472 1.0471975512 1.047197551196598 1.04719755119659774615
+
+    ; print aversin(5), aversin(5i)
+    3.14159265358979323846-2.06343706889556054673i 1.37700319023996442947+2.33097465304931241742i
+
+    ; print aversin(5+5i)
+    2.23961290212082390892+2.55132162547569885882i
+
+    ; pi = pi(1e-20)
+    ; print aversin(pi/6), aversin(pi/3), aversin(4*pi/3)
+    1.07423928334711836378 1.61801141852728010475 3.14159265358979323846-1.82724307729474887791i
+
+LIMITS
+    0 < eps < 1
+
+LINK LIBRARY
+    NUMBER *qaversin_or_NULL(NUMBER *q, NUMBER *epsilon);
+    NUMBER *qaversin(NUMBER *q, NUMBER *epsilon);
+    COMPLEX *c_aversin(COMPLEX *c, NUMBER *epsilon);
+
+SEE ALSO
+    sin, cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    versin, coversin, vercos, covercos
+    acoversin, avercos, acovercos
+    haversin, hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd, acrd
+    cas, cis
+    epsilon
+
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 2023  Landon Curt Noll
+##
+## Calc is open software; you can redistribute it and/or modify it under
+## the terms of the version 2.1 of the GNU Lesser General Public License
+## as published by the Free Software Foundation.
+##
+## Calc is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+## Public License for more details.
+##
+## A copy of version 2.1 of the GNU Lesser General Public License is
+## distributed with calc under the filename COPYING-LGPL.  You should have
+## received a copy with calc; if not, write to Free Software Foundation, Inc.
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## Under source code control:   2023/09/03 00:26:24
+## File existed as early as:    2023
+##
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

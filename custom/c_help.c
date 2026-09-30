@@ -1,7 +1,7 @@
 /*
  * c_help - custom help function
  *
- * Copyright (C) 1999-2004,2021,2022  Landon Curt Noll
+ * Copyright (C) 1999-2004,2021-2023,2026  Landon Curt Noll
  *
  * Calc is open software; you can redistribute it and/or modify it under
  * the terms of the version 2.1 of the GNU Lesser General Public License
@@ -9,7 +9,7 @@
  *
  * Calc is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
  * Public License for more details.
  *
  * A copy of version 2.1 of the GNU Lesser General Public License is
@@ -17,31 +17,42 @@
  * received a copy with calc; if not, write to Free Software Foundation, Inc.
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Under source code control:	1997/03/09 05:25:41
- * File existed as early as:	1997
+ * Under source code control:   1997/03/09 05:25:41
+ * File existed as early as:    1997
  *
- * chongo <was here> /\oo/\	http://www.isthe.com/chongo/
- * Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+ * chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+ * Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/
  */
 
+/*
+ * ISO C requires a translation unit to contain at least one declaration,
+ * so we declare a global variable whose value is based on if CUSTOM is defined.
+ */
+#if defined(CUSTOM)
+int c_help_allowed = 1; /* CUSTOM defined */
+#else
+int c_help_allowed = 0; /* CUSTOM undefined */
+#endif
 
 #if defined(CUSTOM)
 
-#include "have_unistd.h"
-#if defined(HAVE_UNISTD_H)
-#include <unistd.h>
-#endif
+/*
+ * important <system> header includes
+ */
+#  include <unistd.h>
+#  include <stdint.h>
+#  include <stdbool.h>
 
-#include "have_const.h"
-#include "value.h"
-#include "custom.h"
+/*
+ * calc local src includes
+ */
+#  include "../value.h"
+#  include "../custom.h"
+#  include "../have_unused.h"
+#  include "../attribute.h"
+#  include "../errtbl.h"
 
-#include "have_unused.h"
-
-
-#include "attribute.h"
-#include "banned.h"	/* include after system header <> includes */
-
+#  include "../banned.h" /* include after all other includes */
 
 /*
  * c_help - custom help function
@@ -58,32 +69,32 @@
  * and HELPDIR file and work directly with the custom help file.
  *
  * given:
- *	vals[0]	   name of the custom help file to directly access
+ *      vals[0]    name of the custom help file to directly access
  */
 /*ARGSUSED*/
 VALUE
 c_help(char *UNUSED(name), int UNUSED(count), VALUE **vals)
 {
-	VALUE result;		/* what we will return */
+    VALUE result; /* what we will return */
 
-	/*
-	 * parse args
-	 */
-	if (vals[0]->v_type != V_STR) {
-		math_error("custom help arg 1 must be a string");
-		not_reached();
-	}
+    /*
+     * parse args
+     */
+    if (vals[0]->v_type != V_STR) {
+        math_error("custom help arg 1 must be a string");
+        not_reached();
+    }
 
-	/*
-	 * give the help
-	 */
-	customhelp((char *)vals[0]->v_str);
+    /*
+     * give the help
+     */
+    customhelp((char *)vals[0]->v_str->s_str);
 
-	/*
-	 * return NULL
-	 */
-	result.v_type = V_NULL;
-	return result;
+    /*
+     * return NULL
+     */
+    result.v_type = V_NULL;
+    return result;
 }
 
-#endif /* CUSTOM */
+#endif

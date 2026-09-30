@@ -1,7 +1,7 @@
 /*
  * jump - trivial prime jump table
  *
- * Copyright (C) 1999-2007,2014  Landon Curt Noll
+ * Copyright (C) 1999-2007,2014,2026  Landon Curt Noll
  *
  * Calc is open software; you can redistribute it and/or modify it under
  * the terms of the version 2.1 of the GNU Lesser General Public License
@@ -9,7 +9,7 @@
  *
  * Calc is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
  * Public License for more details.
  *
  * A copy of version 2.1 of the GNU Lesser General Public License is
@@ -17,17 +17,17 @@
  * received a copy with calc; if not, write to Free Software Foundation, Inc.
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Under source code control:	1994/06/29 04:03:55
- * File existed as early as:	1994
+ * Under source code control:   1994/06/29 04:03:55
+ * File existed as early as:    1994
  *
- * chongo <was here> /\oo/\	http://www.isthe.com/chongo/
- * Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+ * chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+ * Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/
  */
 
 /*
  * If x is divisible by a trivial prime (2,3,5,7,11), then:
  *
- *		x + jmpindx[ (x>>1)%JMPMOD ]
+ *              x + jmpindx[ (x>>1)%JMPMOD ]
  *
  * is the value of the smallest value > x that is not divisible by a
  * trivial prime.  JMPMOD is the product of the odd trivial primes.
@@ -37,7 +37,7 @@
  *
  * If x is not divisible by a trivial prime, then:
  *
- *		x + jmp[ -jmpindx[(x>>1)%JMPMOD] ]
+ *              x + jmp[ -jmpindx[(x>>1)%JMPMOD] ]
  *
  * is the value of the smallest value > x that is not divisible by a
  * trivial prime.
@@ -53,54 +53,43 @@
  * that are not divisible by trivial primes.
  *
  * Instead of testing successive odd values, this system allows us to
- * skip odd values divisible by trivial primes.	 This is process on the
+ * skip odd values divisible by trivial primes.  This is process on the
  * average reduces the values we need to test by a factor of at least 2.4.
  */
 
-
 #if !defined(INCLUDE_JUMP_H)
-#define INCLUDE_JUMP_H
-
-
-#if defined(CALC_SRC)	/* if we are building from the calc source tree */
-# include "have_const.h"
-# include "decl.h"
-#else
-# include <calc/have_const.h>
-# include <calc/decl.h>
-#endif
-
+#  define INCLUDE_JUMP_H
 
 /*
  * trivial prime CONSTants
  */
-#define JMPMOD (3*5*7*11)	/* product of odd trivial primes */
-#define JMPSIZE (2*4*6*10)	/* ints mod JMPMOD not div by trivial primes */
-#define JPRIME (prime+4)	/* pointer to first non-trivial prime */
+#  define JMPMOD (3 * 5 * 7 * 11)  /* product of odd trivial primes */
+#  define JMPSIZE (2 * 4 * 6 * 10) /* ints mod JMPMOD not div by trivial primes */
+#  define JPRIME (prime + 4)       /* pointer to first non-trivial prime */
 
 /* given x, return the index within jmpindx that applies */
-#define jmpmod(x) (((x)>>1)%JMPMOD)
+#  define jmpmod(x) (((x) >> 1) % JMPMOD)
 
 /* jmpindx table value */
-#define jmpindxval(x) (jmpindx[jmpmod(x)])
+#  define jmpindxval(x) (jmpindx[jmpmod(x)])
 
 /* return the smallest value >= x not divisible by a trivial prime */
-#define firstjmp(x,tmp) ((tmp) = jmpindxval(x), ((tmp) > 0) ? ((x)+(tmp)) : (x))
+#  define firstjmp(x, tmp) ((tmp) = jmpindxval(x), ((tmp) > 0) ? ((x) + (tmp)) : (x))
 
 /* given x not divisible by a trivial prime, return jmp[] index */
-#define jmpptr(x) (-jmpindxval(x))
+#  define jmpptr(x) (-jmpindxval(x))
 
 /* given a jmp pointer, return current jump increment and bump the pointer */
-#define nxtjmp(p) ( *( ((p)<lastjmp) ? ((p)++) : (((p)=jmp),lastjmp) ) )
+#  define nxtjmp(p) (*(((p) < lastjmp) ? ((p)++) : (((p) = jmp), lastjmp)))
 
 /* given a jmp pointer, return dec pointer and return previous jump increment */
-#define prevjmp(p) ( *( ((p)>jmp) ? (--(p)) : ((p)=lastjmp) ) )
+#  define prevjmp(p) (*(((p) > jmp) ? (--(p)) : ((p) = lastjmp)))
 
 /*
  * external jump tables
  */
-EXTERN CONST short jmpindx[];
-EXTERN CONST unsigned char jmp[];
-EXTERN CONST unsigned char *CONST lastjmp;
+extern const short jmpindx[];
+extern const unsigned char jmp[];
+extern const unsigned char *const lastjmp;
 
-#endif /* !INCLUDE_JUMP_H */
+#endif

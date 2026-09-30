@@ -1,7 +1,7 @@
 /*
  * attribute - control use of attributes in a backward compatible way
  *
- * Copyright (C) 2022  Landon Curt Noll
+ * Copyright (C) 2022,2026  Landon Curt Noll
  *
  * Calc is open software; you can redistribute it and/or modify it under
  * the terms of the version 2.1 of the GNU Lesser General Public License
@@ -9,7 +9,7 @@
  *
  * Calc is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
  * Public License for more details.
  *
  * A copy of version 2.1 of the GNU Lesser General Public License is
@@ -17,17 +17,15 @@
  * received a copy with calc; if not, write to Free Software Foundation, Inc.
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Under source code control:	2022/01/21 22:51:25
- * File existed as early as:	2022
+ * Under source code control:   2022/01/21 22:51:25
+ * File existed as early as:    2022
  *
- * chongo <was here> /\oo/\	http://www.isthe.com/chongo/
- * Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+ * chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+ * Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/
  */
 
-
 #if !defined(INCLUDE_ATTRIBUTE_H)
-#define INCLUDE_ATTRIBUTE_H
-
+#  define INCLUDE_ATTRIBUTE_H
 
 /*
  * backward compatibility
@@ -36,16 +34,14 @@
  * For example, MSVC, TenDRAm and Little C Compiler doesn't support __attribute__.
  * Early gcc does not support __attribute__.
  *
- * Not all compiles have __has_builtin
+ * Not all compilers have __has_builtin
  */
-#if !defined(__attribute__) && \
-    (defined(__cplusplus) || !defined(__GNUC__)  || __GNUC__ == 2 && __GNUC_MINOR__ < 8)
+#  if !defined(__attribute__) && (defined(__cplusplus) || !defined(__GNUC__) || __GNUC__ == 2 && __GNUC_MINOR__ < 8)
 #    define __attribute__(A)
-#endif
-#if !defined __has_builtin
+#  endif
+#  if !defined __has_builtin
 #    define __has_builtin(x) 0
-#endif
-
+#  endif
 
 /*
  * not_reached
@@ -59,11 +55,10 @@
  * The not_reached will either yield a __builtin_unreachable() feature call,
  * or it will call abort from stdlib.
  */
-#if __has_builtin(__builtin_unreachable)
+#  if __has_builtin(__builtin_unreachable)
 #    define not_reached() __builtin_unreachable()
-#else
+#  else
 #    define not_reached() abort()
-#endif /* __has_builtin(__builtin_unreachable) */
+#  endif
 
-
-#endif /* !INCLUDE_ATTRIBUTE_H */
+#endif

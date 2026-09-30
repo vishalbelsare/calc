@@ -1,8 +1,31 @@
+# TL;DR Try calc
+
+## TL;DR Install calc
+
+```
+misc linux: sudo yum install calc
+on Arch:    sudo pacman -S calc
+on Debian:  sudo apt install calc
+on RHEL:    sudo dnf install calc
+on Ubuntu:  sudo apt install calc
+via Termux: apt install calc
+via src:    sudo make clobber all chk install
+```
+
+## TL;DR Run calc
+
+```
+misc shell:   calc
+via bash:     calc
+via misc app: launch calc via Termux
+via zsh:      calc
+```
+
 # What is calc?
 
 Calc is an interactive calculator which provides for easy large
 numeric calculations, but which also can be easily programmed
-for difficult or long calculations.	 It can accept a command line
+for difficult or long calculations.      It can accept a command line
 argument, in which case it executes that single command and exits.
 Otherwise, it enters interactive mode.  In this mode, it accepts
 commands one at a time, processes them, and displays the answers.
@@ -167,12 +190,12 @@ followed by a function declaration very similar to C.
 ```sh
 define f2(n)
 {
-	local ans;
+        local ans;
 
-	ans = 1;
-	while (n > 1)
-		ans *= (n -= 2);
-	return ans;
+        ans = 1;
+        while (n > 1)
+                ans *= (n -= 2);
+        return ans;
 }
 ```
 
@@ -241,7 +264,7 @@ provides information on built-in mathematical functions, whereas:
 help asinh
 ```
 
-will provides information a specific function.  The following
+will provide information on a specific function.  The following
 help files:
 
 ```sh
@@ -260,4 +283,58 @@ help unexpected
 ```
 
 It contains information about differences between C and calc
-that may surprise C programmers.
+that may surprise C programmers.  The command:
+
+```sh
+help environment
+```
+
+contains information regarding how environment variables can be
+used to configure some aspects of calc.  If `CALCRC` and
+`CALCPATH` are unset, calc first checks the relevant XDG base
+directory environment variables and uses them when they name
+usable absolute directories.  If `CALCHISTFILE` is unset,
+calc preserves an existing `~/.calc_history`; otherwise it uses
+`${XDG_STATE_HOME}/calc/history` when `XDG_STATE_HOME` names a
+usable absolute writable directory.
+
+# On calc repo branches
+
+The [calc repo](https://github.com/lcn2/calc) has 3 important branches:
+
+- [master branch](https://github.com/lcn2/calc/tree/master)
+
+This branch is where the latest **stable releases** of calc are made.
+
+When in doubt, **use the [master branch](https://github.com/lcn2/calc/tree/master)**.
+
+- [calcv3 branch](https://github.com/lcn2/calc/tree/calcv3)
+
+The "**calc v3**" branch is where the [new calc v3 direction](https://github.com/lcn2/calc/issues/103)
+work is being performed.
+
+Among the various goals of "**calc v3**" is to support 64-bit and larger CPUs,
+to support very large values up to 256 TBytes in size (up to 2^(2^51-1), assuming you have the RAM/swap space), etc.
+See the [new calc v3 discussion](https://github.com/lcn2/calc/issues/103) for more details.
+
+When calc version 2.17.0.0 was formed (see the
+[master branch](https://github.com/lcn2/calc/tree/master)), the "**calc v3**" branch "forked"
+off of the calc version 2.17.0.0 code base to form the calc version 3.0.1.0 code base.
+
+While you are welcome to try the "**calc v3**" branch, please remember that it is an "**experimental**" branch.
+
+- [legacy-calc branch](https://github.com/lcn2/calc/tree/legacy-calc)
+
+Some very old systems might have trouble with the set of changes that were made to the calc code base between
+calc version 2.16.1.3, and calc version 2.17.0.0.  For example, some very old systems that
+don't support a c17 C compiler, or that lack some of the standard include files,
+or that don't support the 64-bit `int64_t` and `uint64_t` types, or that don't support the boolean type,
+that use 32-bit (or smaller) CPUs, etc., might not be able to compile the master branch code.
+
+Very old systems that are unable to compile/use# the master branch should use the
+[legacy-calc branch](https://github.com/lcn2/calc/tree/legacy-calc)
+which will be "frozen" at calc version 2.16.1.x (such as version 2.16.1.3).
+
+# Reporting Security Issues
+
+To report a security issue, please visit "[Reporting Security Issues](https://github.com/lcn2/calc/security/policy)".

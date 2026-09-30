@@ -1,0 +1,92 @@
+NAME
+    cis - Euler's formula
+
+SYNOPSIS
+    cis(x [,eps])
+
+TYPES
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
+
+    return      number
+
+DESCRIPTION
+    Calculate the Euler's formula value of x to a multiple of eps with error less in
+    absolute value than .75 * eps.
+
+    This function is sometimes called cosine and sine, is equivalent to:
+
+        cis(x) = cos(x) + 1i*sin(x)
+        cis(x) = exp(1i * x)
+
+EXAMPLE
+    ; print cis(1/2), cis(5/7)
+    0.87758256189037271612+0.47942553860420300027i 0.75556134670069659847+0.6550778971785185742i
+
+    ; print cis(42/7)
+    0.96017028665036602055-0.27941549819892587281i
+
+    ; print cis(1, 1e-5), cis(1, 1e-10), cis(1, 1e-15)
+    0.5403+0.84147i 0.5403023059+0.8414709848i 0.54030230586814+0.841470984807896i
+
+    ; print cis(1, 1e-20)
+    0.5403023058681397174+0.84147098480789650665i
+
+    ; print cis(2 + 3i, 1e-5), cis(2 + 3i, 1e-10)
+    -0.02072+0.04527i -0.020718731+0.0452712531i
+
+    ; pi = pi(1e-20)
+    ; print cis(pi/6), cis(pi/2), cis(pi)
+    0.86602540378443864676+0.5i 1i -1
+
+LIMITS
+    0 < eps < 1
+
+LINK LIBRARY
+    COMPLEX *c_cis(COMPLEX *x, NUMBER *eps)
+
+SEE ALSO
+    cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    versin, coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    haversin, hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd, acrd
+    cis
+    epsilon
+
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 2023  Landon Curt Noll
+##
+## Calc is open software; you can redistribute it and/or modify it under
+## the terms of the version 2.1 of the GNU Lesser General Public License
+## as published by the Free Software Foundation.
+##
+## Calc is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+## Public License for more details.
+##
+## A copy of version 2.1 of the GNU Lesser General Public License is
+## distributed with calc under the filename COPYING-LGPL.  You should have
+## received a copy with calc; if not, write to Free Software Foundation, Inc.
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## Under source code control:   2023/10/02 23:11:18
+## File existed as early as:    2023
+##
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

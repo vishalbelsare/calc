@@ -1,0 +1,86 @@
+NAME
+    cas - trigonometric cosine plus sine
+
+SYNOPSIS
+    cas(x [,eps])
+
+TYPES
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
+
+    return      number
+
+DESCRIPTION
+    Calculate the trigonometric cosine plus sine of x to a multiple of eps with error less in
+    absolute value than .75 * eps.
+
+    This function is sometimes called cosine and sine, is equivalent to:
+
+        cas(x) = cos(x) + sin(x)
+
+EXAMPLE
+    ; print cas(1/2), cas(5/7), cas(42/7)
+    1.35700810049457571639 1.41063924387921517267 0.68075478845144014774
+
+    ; print cas(1, 1e-5), cas(1, 1e-10), cas(1, 1e-15), cas(1, 1e-20)
+    1.38177 1.3817732907 1.381773290676036 1.38177329067603622405
+
+    ; print cas(2 + 3i, 1e-5), cas(2 + 3i, 1e-10)
+    4.96487-13.27814i 4.9648734559-13.2781348538i
+
+    ; pi = pi(1e-20)
+    ; print cas(pi/6), cas(pi/2), cas(pi)
+    1.36602540378443864676 1 -1
+
+LIMITS
+    0 < eps < 1
+
+LINK LIBRARY
+    NUMBER *qcas(NUMBER *x, NUMBER *eps)
+    COMPLEX *c_cas(COMPLEX *x, NUMBER *eps)
+
+SEE ALSO
+    cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    versin, coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    haversin, hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd, acrd
+    cis
+    epsilon
+
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 2023  Landon Curt Noll
+##
+## Calc is open software; you can redistribute it and/or modify it under
+## the terms of the version 2.1 of the GNU Lesser General Public License
+## as published by the Free Software Foundation.
+##
+## Calc is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+## Public License for more details.
+##
+## A copy of version 2.1 of the GNU Lesser General Public License is
+## distributed with calc under the filename COPYING-LGPL.  You should have
+## received a copy with calc; if not, write to Free Software Foundation, Inc.
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## Under source code control:   2023/10/02 23:11:18
+## File existed as early as:    2023
+##
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

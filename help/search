@@ -5,12 +5,12 @@ SYNOPSIS
     search(a, b [, [c] [, [d] ] ])
 
 TYPES
-    a		matrix, list, association or file
-    b		string if a is a file, otherwise any
-    c		integer, defaults to zero or current file-position
-    d		integer, defaults to size(a) or current file-position
+    a           matrix, list, association or file
+    b           string if a is a file, otherwise any
+    c           integer, defaults to zero or current file-position
+    d           integer, defaults to size(a) or current file-position
 
-    return	nonnegative integer or null value
+    return      nonnegative integer or null value
 
 DESCRIPTION
 
@@ -19,32 +19,35 @@ DESCRIPTION
     and d by size(a) + d.  Any such adjustment is assumed in the following
     description.
 
+    If b is an empty string, then it match the beginning of a.
 
     For Non-file a:
+    ---------------
 
     For a matrix, list, or association a,
     search(a, b, c, d) returns, if it exists, the least index i for which
-    c <= i < d,	 0 <= i < size(a), and, if accept() has not been defined,
+    c <= i < d,  0 <= i < size(a), and, if accept() has not been defined,
     a[[i]] == b, or if accept() has been defined, accept(a[[i]], b)
     tests as nonzero.  The null value is returned if there is no such i.
 
     For example, to search for the first a[[i]] > b an appropriate
     accept() function is given by:
 
-		define accept(v,b) = (v > b);
+                define accept(v,b) = (v > b);
 
     To restore the original behavior of search(), one may then use
 
-		define accept(v, b) = (v == b).
+                define accept(v, b) = (v == b).
 
     Since the addresses (rather than values) of a and b are passed,
     the values of v = x[[i]] and b may be changed during execution
     of search(a, b, c, d), e.g. if accept(v,b) has been defined by
 
-		define accept(v,b) = (v > b ? v-- : b++);
+                define accept(v,b) = (v > b ? v-- : b++);
 
 
     For a is a file-stream:
+    -----------------------
 
     c defaults to the current file-position if there are just two
     arguments (a,b) or if there are four arguments as in (a,b, ,d)
@@ -54,13 +57,14 @@ DESCRIPTION
     the number of arguments (indicated by commas) is four or less
     than four.
 
-    If a is a file, a string formed by n successive characters in a
-    is considered to occur at the file position
-    of the first character.  E.g. if a has the characters "123456",
-    the string "345" is said to occur at position 2.
+    If a is a file, a string formed by n successive characters in a is
+    considered to occur at the file position of the first character.
+    E.g., if a has the characters "123456", the string "345" is said to
+    occur at position 2.
 
     The file is searched forwards from file-position pos = c for
     a match with b (not including the terminating '\0').
+
     Only characters with file-positions less than d are considered,
     so the effective interval for the first-character position pos
     for a matching string is limited by both c <= pos <= d - strlen(b)
@@ -73,45 +77,103 @@ DESCRIPTION
     The null value is returned if no match is found.  If c, d, size(a)
     and strlen(b) are such that no match is possible, no reading of the
     file occurs and the current file-position is not changed.  In a case
-    where characters are read, the final file-position will be
-    min(d, size(a)) - strlen(b) + 1,
-    i.e. the file will be at the first position where a match is impossible
+    where characters are read, the final file-position will be:
+
+        min(d, size(a)) - strlen(b) + 1
+
+    I.e., the file will be at the first position where a match is impossible
     because the specified search region has insufficient remaining characters.
 
 EXAMPLE
     ; L = list(2,"three",4i)
     ; search(L,"three")
-	    1
+            1
     ; search(L,"threes")
     ; search(L, 4i, 4)
     ; search(L, 4i, 1)
-	    2
+            2
 
+    ; x = rm("-f", "foo")
     ; f = fopen("foo", "w+")
     ; fputs(f, "This file has 28 characters.")
+    ; /*        0         1         2        */
+    ; /*         123456789 123456789 1234567 */
     ; rewind(f)
+
     ; search(f, "ha")
-	10
+        10
     ; ftell(f)
-	12
+        12
+
     ; search(f, "ha")
-	18
+        18
+    ; ftell(f)
+        20
+
     ; search(f, "ha")
+    ; ftell(f)
+        27
+
     ; search(f, "ha",)
-	10
-    ; search(f, "ha", 12)
-	18
-    ; search(f, "ha", -10)
-	18
-    ; search(f, "ha", ,)
-	10
-    ; search(f, "ha", 11, 19)
+        10
     ; ftell(f)
-	18
+        12
+
+    ; search(f, "hara", 12)
+        18
+    ; ftell(f)
+        22
+
+    ; search(f, "ha", -10)
+        18
+    ; ftell(f)
+        20
+
+    ; search(f, "ha", -9)
+    ; ftell(f)
+        27
+
+    ; search(f, "has", ,)
+        10
+    ; ftell(f)
+        13
+
+    ; search(f, "char", 11, 22)
+        17
+    ; ftell(f)
+        21
+
     ; search(f, "ha", 11, 20)
-	18
+        18
+    ; ftell(f)
+        20
+
     ; search(f, "ha", 5, 500)
-	10
+        10
+    ; ftell(f)
+        12
+
+    ; search(f, "ha", 500, 1000)
+    ; ftell(f)
+        12
+
+    ; rewind(f)
+    ; search(f, "")
+        0
+    ; ftell(f)
+        0
+
+    ; rewind(f)
+    ; search(f, "This file has 28 characters.")
+        0
+    ; ftell(f)
+        28
+
+    ; rewind(f)
+    ; search(f, "his file has 28 characters.")
+        1
+    ; ftell(f)
+        28
 
 LIMITS
     none
@@ -125,7 +187,7 @@ SEE ALSO
 
      assoc, list, mat
 
-## Copyright (C) 1999-2006,2021  Landon Curt Noll
+## Copyright (C) 1999-2006,2021,2026  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -133,7 +195,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -141,8 +203,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1994/03/19 03:13:21
-## File existed as early as:	1994
+## Under source code control:   1994/03/19 03:13:21
+## File existed as early as:    1994
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

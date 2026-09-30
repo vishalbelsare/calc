@@ -2,15 +2,15 @@ On calc versions and releases
 
 Calc version numbers have 4 levels.  For example:
 
-	 ++=== top 2 levels: calc builtin functions compatibility
-	 ||
-	vvvv
+         ++=== top 2 levels: calc builtin functions compatibility
+         ||
+        vvvv
 
-	2.14.0.8
-	 \\\\\\
-	^  \\\\----> top 3 levels: calc important code base change
-	|
-	+--- top version level: internal representation compatibility
+        2.14.0.8
+         \\\\\\
+        ^  \\\\----> top 3 levels: calc important code base change
+        |
+        +--- top version level: internal representation compatibility
 
 The top version level (e.g., 2) refers to the internal representation
 of values.  Any library or hardware linked/built for calc 2 will be able
@@ -32,69 +32,110 @@ neither a change to the internal representation format (a top level
 version change), nor were there new calc builtins introduced in such
 a top 3 level release.
 
-There are 3 classes of changes to the calc source tree:
 
-alpha		=> untagged GitHub commit
+The file, "version.h" defines the 4 version levels:
 
-	Any untagged commit to the GitHub master branch should be
-	considered as alpha code that may make calc unstable.
+    MAJOR_VER           /* level 1: major library version */
+    MINOR_VER           /* level 2: minor library version */
+    MAJOR_PATCH         /* level 3: major software version level */
+    MINOR_PATCH         /* level 4: minor software version level */
 
-	While we try to avoid breaking the calc code with commits,
-	there is a risk that picking up such a change could
-	negatively impact the code.
 
-tested		=> tagged GitHub pre-release commit
+The program "ver_calc" will print information about the compiled
+calc version as defined "version.h" when "ver_calc" was compiled:
 
-	A new version of calc has been released and has recently passed
-	regression testing on at least to different platforms and chip
-	architectures.
+    usage: ./ver_calc [-h] [-V]
 
-	The "tested" class was historically called "untested",
-	however this term was misleading as such releases ARE tested.
-	Since 2.14.0.13 we have used the term "tested".
+        -h      print this message and exit non-zero
+        -V      print 3-level version (def: print 4-level version)
 
-	All tested releases are tagged with a new version number.
-	Such releases have GitHub assets such as a source tarball,
-	zip file, source rpm, development rpm and binary rpm.  See the
-	orange "Pre-release" GitHub releases under:
+Also "calc -v" will print the calc version as defined "version.h" when
+"calc" was compiled.
 
-	    https://github.com/lcn2/calc/releases
+The master branch:
 
-	 At the bottom of a given release is a "> Assets" that may
-	 be opened to reveal down-loadable files.
+    The public repository of calc source code is:
 
-production	=> tagged GitHub release commit
+        http://github.com/lcn2/calc
 
-	A new version of calc has been released and has undergone
-	extensive testing over time over a number of platforms.
-	Sometimes a "tested" release that is found work well over
-	a period of time will be re-released with a new version
-	number as a "production" release.
+    On that GitHub site you may find released version of calc,
+    "production", "tested" and "alpha".  All commits on the master
+    branch that are not associated with a release are "alpha".
 
-	The latest production GitHub release is marked with green
-	"Latest" label under:
+    Any "alpha" commit is likely future code for a future
+    "tested" or "production" version of calc.
 
-	    https://github.com/lcn2/calc/releases
+alpha           ==> untagged GitHub commit
 
-	A release that has neither an orange "Pre-release" nor
-	a green "Latest" label is a prior production class release.
+        Any untagged commit to the GitHub master branch should be
+        considered as alpha code that may make calc unstable.
 
-	At the bottom of a given release is a "> Assets" that may
-	be opened to reveal down-loadable files.
+        While we try to avoid breaking the calc code with commits,
+        there is a risk that picking up such a change could
+        negatively impact the code.
 
-	Production class code where stability is critical should use a
-	"production" release.
+        NOTE: The calc version found in "version.h", and printed
+              by both "ver_calc [-V]" and "calc -v" for an untagged
+              commit is the previous "tested" or "production" version
+              of calc.  Any "alpha" changes that remain are code
+              for some future version of calc.
+
+              At the last stage of the release process, "version.h"
+              will be updated as well as the top level version range
+              listed in "CHANGES".
+
+tested          ==> tagged GitHub pre-release commit
+
+        A new version of calc has been released and has recently passed
+        regression testing on at least to different platforms and chip
+        architectures.
+
+        The "tested" class was historically called "untested",
+        however this term was misleading as such releases ARE tested.
+        Since 2.14.0.13 we have used the term "tested".
+
+        All tested releases are tagged with a new version number.
+        Such releases have GitHub assets such as a source tarball,
+        zip file, source rpm, development rpm and binary rpm.  See the
+        orange "Pre-release" GitHub releases under:
+
+            https://github.com/lcn2/calc/releases
+
+         At the bottom of a given release is a "> Assets" that may
+         be opened to reveal down-loadable files.
+
+production      ==> tagged GitHub release commit
+
+        A new version of calc has been released and has undergone
+        extensive testing over time over a number of platforms.
+        Sometimes a "tested" release that is found work well over
+        a period of time will be re-released with a new version
+        number as a "production" release.
+
+        The latest production GitHub release is marked with green
+        "Latest" label under:
+
+            https://github.com/lcn2/calc/releases
+
+        A release that has neither an orange "Pre-release" nor
+        a green "Latest" label is a prior production class release.
+
+        At the bottom of a given release is a "> Assets" that may
+        be opened to reveal down-loadable files.
+
+        Production class code where stability is critical should use a
+        "production" release.
 
 A historical note and apology:
 
-In the past, some version number changes were made that did not fully
-reflect the above version number or change class.  Moreover older terms
-such as "stable" and "unstable" were misleading and did not properly
-reflect the nature of the change.  Sorry!  The purpose of this document
-is to try and bring a better level of conformity to source code updates,
-tagged releases and version numbers.
+    In the past, some version number changes were made that did not
+    fully reflect the above version number or change class.  Moreover
+    older terms such as "stable" and "unstable" were misleading and
+    did not properly reflect the nature of the change.  Sorry!  The
+    purpose of this document is to try and bring a better level of
+    conformity to source code updates, tagged releases and version numbers.
 
-## Copyright (C) 2021  Landon Curt Noll
+## Copyright (C) 2021,2023  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -102,7 +143,7 @@ tagged releases and version numbers.
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -110,8 +151,8 @@ tagged releases and version numbers.
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	2021/12/12 19:36:26
-## File existed as early as:	2021
+## Under source code control:   2021/12/12 19:36:26
+## File existed as early as:    2021
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

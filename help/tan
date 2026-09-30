@@ -5,30 +5,67 @@ SYNOPSIS
     tan(x [,eps])
 
 TYPES
-    x		real
-    eps		nonzero real, defaults to epsilon()
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
 
-    return	real
+    return      real
 
 DESCRIPTION
-    Calculate the tangent of x to a multiple of eps, with error less
+    Calculate the trigonometric tangent of x to a multiple of eps, with error less
     in absolute value than .75 * eps.
 
+    This function is equivalent to:
+
+        tan(x) = sin(x) / cos(x)
+
 EXAMPLE
+    ; print tan(1/2), tan(5/7), tan(42/7)
+    0.54630248984379051326 0.8670082185107029875 -0.29100619138474915705
+
     ; print tan(1, 1e-5), tan(1, 1e-10), tan(1, 1e-15), tan(1, 1e-20)
     1.55741 1.5574077247 1.557407724654902 1.55740772465490223051
 
+    ; print tan(2 + 3i, 1e-5), tan(2 + 3i, 1e-10)
+    ~-0.00376408798745471014+~1.00323845857938817252i ~-0.00376402563894634508+~1.00323862734859967572i
+
+    ; pi = pi(1e-20)
+    ; print tan(pi/6), tan(pi/2), tan(pi)
+    0.57735026918962576451 756606132568153667453.84481533280934425956 0
+
+    ; # NOTE: The huge value for tan(pi/2) is because the pi variable is not exactly pi.
+
 LIMITS
-    unlike sin and cos, x must be real
-    eps > 0
+    0 < eps < 1
 
 LINK LIBRARY
     NUMBER *qtan(NUMBER *x, NUMBER *eps)
+    COMPLEX *c_tan(COMPLEX *c, NUMBER *eps)
 
 SEE ALSO
-    sin, cos, sec, csc, cot, epsilon
+    sin, cos, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    versin, coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    haversin, hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd, acrd
+    cas, cis
+    epsilon
 
-## Copyright (C) 1999  Landon Curt Noll
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 1999,2023  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -36,7 +73,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -44,8 +81,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1994/03/19 01:40:29
-## File existed as early as:	1994
+## Under source code control:   1994/03/19 01:40:29
+## File existed as early as:    1994
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

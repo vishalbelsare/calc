@@ -5,11 +5,11 @@ SYNOPSIS
     atan2(y, x, [,eps])
 
 TYPES
-    y		real
-    x		real
-    eps		nonzero real, defaults to epsilon()
+    y           real
+    x           real
+    eps         nonzero real, defaults to epsilon()
 
-    return	real
+    return      real
 
 DESCRIPTION
     If x and y are not both zero, atan2(y, x, eps) returns, as a multiple of
@@ -28,7 +28,7 @@ EXAMPLE
     0 ~0.52359877559829887307 ~0.31038740713235146535
 
 LIMITS
-    none
+    eps != 0
 
 LINK LIBRARY
     NUMBER *qatan2(NUMBER *y, *x, *acc)
@@ -36,7 +36,7 @@ LINK LIBRARY
 SEE ALSO
     acos, asin, atan, cos, epsilon, sin, tan
 
-## Copyright (C) 1999,2021  Landon Curt Noll
+## Copyright (C) 1999,2021,2023  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -44,7 +44,7 @@ SEE ALSO
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -52,8 +52,8 @@ SEE ALSO
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1994/03/19 01:40:26
-## File existed as early as:	1994
+## Under source code control:   1994/03/19 01:40:26
+## File existed as early as:    1994
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

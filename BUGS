@@ -28,7 +28,7 @@ Click in the triangle to open up the Assets then click on
 the approptiate package to download.
 
 If you made and modifications to calc beyond the simple Makefile
-configuration, try backing those changges out and see if things get
+configuration, try backing those changes out and see if things get
 better.
 
 If you have tried all of the above and things still are not right,
@@ -60,56 +60,19 @@ GitHub web page, click on this button:
 
     ((New Issue))
 
-=-=
-
-If you prefer to not use GitHub, then you
-may send bug and bug fixes reports to:
-
-    calc-bugrept-mail at asthe dot com
-
-    NOTE: Remove spaces and replace 'at' with @, 'dot' with .
-
-    NOTE: This replaces the old calc-bugs at asthe dot com address.
-
-PLEASE put following the SPECIAL PHRASE somewhere in your Email Subject line:
-
-    calc bug report
-
-You may add additional words to your subject line.
-
-Suggestion:
-
-    From time to time, the Email address and Subject SPECIAL PHRASE
-    may change so verify you have the current info by visiting:
-
-	http://www.isthe.com/chongo/tech/comp/calc/calc-bugrept.html
-
-IMPORTANT:
-
-    PLEASE use the above SPECIAL PHRASE somewhere in the Subject line or
-    the mail system won't deliver your Email message.
-
-Keep in mind that the best way to report on a calc bug is
-via the above mentioned calc GitHub issue URL.
-
-Please be patient as we cannot always respond to Email messages quickly.
-
-=-=
-
-When you send your report, via the calc GitHub issue URL or Email,
-please include the following information:
+Please include the following information in the new issue:
 
     * A description of the problem
 
     * Version of calc you are using
 
-	If you cannot compile calc, then look at version.c
-	and report the #define that start with:
+        If you cannot compile calc, then look at version.c
+        and report the #define that start with:
 
-	    #define MAJOR_VER
-	    #define MINOR_VER
-	    #define MAJOR_PATCH
-	    #define MINOR_PATCH
+            #define MAJOR_VER
+            #define MINOR_VER
+            #define MAJOR_PATCH
+            #define MINOR_PATCH
 
     * If you modified calc from an official patch,
       send us the mods you made
@@ -123,12 +86,13 @@ please include the following information:
     * If calc dumped core, try to send us a core dump stack trace
 
     * cd to the calc source directory, and send the contents
-      of debug.out produced by this command:
+      of debug.out.txt produced by this command:
 
-	make debug > debug.out 2>&1
+        make debug
 
-Fell free to use the above address to send in bug fixes (in the form
-of a context diff patch).
+PLEASE attach the debug.out.txt file to your GitHub issue (bug report)!!
+
+Please be patient as we cannot always respond to pull requests quickly.
 
 =-=
 
@@ -137,7 +101,9 @@ Known bugs in calc:
     The output of the alg_config.cal resource file is bogus.
     We would welcome a replacement for this code.
 
-    Calc may not compile natively under Windows 11. See README.WINDOWS.
+    Calc may not compile natively under Windows 11, however with
+    MSYS2 Software Distribution (a fork of Cygwin) people compile
+    calc under Windiws just fine.  See README.WINDOWS.
 
     We are sure some more bugs exist.  When you find them, please let
     us know!  See the above for details on how to report and were to
@@ -156,16 +122,16 @@ mis-features in calc:
 
       This works as expected:
 
-	if (expr) {
-	    ...
-	}
+        if (expr) {
+            ...
+        }
 
       However this WILL NOT WORK AS EXPECTED:
 
-	if (expr)
-	{
-	    ...
-	}
+        if (expr)
+        {
+            ...
+        }
 
       This needs to be changed.  See also "help statement", "help unexpected",
       and "help todo".
@@ -177,24 +143,33 @@ mis-features in calc:
       integers to/from files the hard way.  It does NOT use blkcpy.  The
       following code:
 
-	i = (ord("\n") << 16) | (ord("i") << 8) | ord("H")
-	b = blk()
-	copy(i, b)
-	fd = fopen("file", "w")
-	copy(b, fd);
-	fclose(fd)
+        i = (ord("\n") << 16) | (ord("i") << 8) | ord("H")
+        b = blk()
+        copy(i, b)
+        fd = fopen("file", "w")
+        copy(b, fd);
+        fclose(fd)
 
       will write an extra NUL octet to the file.  Where as:
 
-	read intfile
-	i = (ord("\n") << 16) | (ord("i") << 8) | ord("H")
-	be2file(i, "file2")
+        read intfile
+        i = (ord("\n") << 16) | (ord("i") << 8) | ord("H")
+        be2file(i, "file2")
 
       will not.
 
+    * The numerator is assumed
+
+        The numerator value of 1 appears to be assumed.  In calc:
+
+             / 2
+
+        will produce a value of 0.5 as if the numerator 1 was given.
+
+
 =-=
 
-## Copyright (C) 1999-2014,2021  Landon Curt Noll
+## Copyright (C) 1999-2014,2021,2023  Landon Curt Noll
 ##
 ## Calc is open software; you can redistribute it and/or modify it under
 ## the terms of the version 2.1 of the GNU Lesser General Public License
@@ -202,7 +177,7 @@ mis-features in calc:
 ##
 ## Calc is distributed in the hope that it will be useful, but WITHOUT
 ## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU Lesser General
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
 ## Public License for more details.
 ##
 ## A copy of version 2.1 of the GNU Lesser General Public License is
@@ -210,8 +185,8 @@ mis-features in calc:
 ## received a copy with calc; if not, write to Free Software Foundation, Inc.
 ## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
-## Under source code control:	1994/03/18 14:06:13
-## File existed as early as:	1994
+## Under source code control:   1994/03/18 14:06:13
+## File existed as early as:    1994
 ##
-## chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-## Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

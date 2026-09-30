@@ -1,0 +1,87 @@
+NAME
+    haversin - half versed trigonometric sine
+
+SYNOPSIS
+    haversin(x [,eps])
+
+TYPES
+    x           number (real or complex)
+    eps         0 < real < 1, defaults to epsilon()
+
+    return      number
+
+DESCRIPTION
+    Calculate the half versed trigonometric sine of x to a multiple of eps with error less in
+    absolute value than .75 * eps.
+
+    This function is sometimes called havers, is equivalent to:
+
+        haversin(x) = versin(x) / 2
+        haversin(x) = (1 - cos(x)) / 2
+
+EXAMPLE
+    ; print haversin(1/2), haversin(5/7), haversin(42/7)
+    0.06120871905481364194 ~0.12221932664965170076 ~0.01991485667481698972
+
+    ; print haversin(1, 1e-5), haversin(1, 1e-10), haversin(1, 1e-15), haversin(1, 1e-20)
+    0.22985 0.22984884705 0.22984884706593 0.2298488470659301413
+
+    ; print haversin(2 + 3i, 1e-5), haversin(2 + 3i, 1e-10)
+    2.594815+4.554615i 2.5948128455+4.5546139469i
+
+    ; pi = pi(1e-20)
+    ; print haversin(pi/6), haversin(pi/2), haversin(pi)
+    0.06698729810778067662 0.5 1
+
+LIMITS
+    0 < eps < 1
+
+LINK LIBRARY
+    NUMBER *qhaversin(NUMBER *x, NUMBER *eps)
+    COMPLEX *c_haversin(COMPLEX *x, NUMBER *eps)
+
+SEE ALSO
+    sin, cos, tan, cot, sec, csc
+    asin, acos, atan, acot, asec, acsc
+    versin, coversin, vercos, covercos
+    aversin, acoversin, avercos, acovercos
+    hacoversin, havercos, hacovercos
+    ahaversin, hacoversin, havercos, ahacovercos
+    exsec, aexsec, excsc, aexcsc
+    crd, acrd
+    cas, cis
+    epsilon
+
+EXTERNAL RESOURCES
+    For general information on trigonometric functions, see:
+
+        https://en.wikipedia.org/wiki/Trigonometric_functions#Unit-circle_definitions
+        https://en.wikipedia.org/wiki/Versine
+        https://en.wikipedia.org/wiki/Exsecant
+        https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+        https://en.wikipedia.org/wiki/Chord_(geometry)
+        https://en.wikipedia.org/wiki/Secant_line
+        https://en.wikipedia.org/wiki/Hartley_transform#cas
+        https://en.wikipedia.org/wiki/Cis_(mathematics)
+
+## Copyright (C) 2023  Landon Curt Noll
+##
+## Calc is open software; you can redistribute it and/or modify it under
+## the terms of the version 2.1 of the GNU Lesser General Public License
+## as published by the Free Software Foundation.
+##
+## Calc is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+## Public License for more details.
+##
+## A copy of version 2.1 of the GNU Lesser General Public License is
+## distributed with calc under the filename COPYING-LGPL.  You should have
+## received a copy with calc; if not, write to Free Software Foundation, Inc.
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+##
+## Under source code control:   2023/09/24 11:14:48
+## File existed as early as:    2023
+##
+## chongo <was here> /\oo/\     http://www.isthe.com/chongo/
+## Share and enjoy!  :-)        http://www.isthe.com/chongo/tech/comp/calc/

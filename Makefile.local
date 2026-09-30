@@ -1,13 +1,45 @@
+#!/usr/bin/env make
 #
-# Makefile.local - local Makefile variables
+# Makefile.local - modify, replace or append calc Makefile variables
 #
-# This file is included by Makefile after the last Makefile is set and
-# before the first make rule.  This makes this file suitable to override
-# Makefile variables.
+# Copyright (C) 2023,2026  Landon Curt Noll
+#
+# Suggestion: Read the HOWTO.INSTALL file.
+#
+# Calc is open software; you can redistribute it and/or modify it under
+# the terms of version 2.1 of the GNU Lesser General Public License
+# as published by the Free Software Foundation.
+#
+# Calc is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+# Public License for more details.
+#
+# A copy of version 2.1 of the GNU Lesser General Public License is
+# distributed with calc under the filename COPYING-LGPL.  You should have
+# received a copy with calc; if not, write to Free Software Foundation, Inc.
+# 59 Temple Place, Suite 330, Boston, MA  02111-1307, USA.
+#
+# This calculator first developed by David I. Bell with help/mods from others.
+#
+# chongo <was here> /\oo/\	http://www.isthe.com/chongo/
+# Share and enjoy!  :-)		http://www.isthe.com/chongo/tech/comp/calc/
+
+####
+# This file is included all calc Makefiles after the last Makefile variable
+# is set and before the first make rule.  This makes this file suitable to
+# modify, replace or append Makefile variables.
 #
 # To replace a Makefile variable, use := symbols.  For example:
 #
 #	CCWERR:= -Werror
+#	DEBUG:= -O0 -g
+#
+# You can append to an existing Makefile variable using '+=' symbols.
+# For example:
+#
+#	COMMON_CFLAGS+= -std=gnu2x
+####
 
 ###################################################################
 # NOTE: For this and other commended out examples in this file,	  #
@@ -16,24 +48,148 @@
 # Comments start with a #-character.				  #
 ###################################################################
 
-# You can append to an existing Makefile variable using '+=' symbols.
-# For example:
+####
+# Force calc to install under /usr/local
 #
-#	CFLAGS+= -Ofast
+# PREFIX:= /usr/local
+# BINDIR:= ${PREFIX}/bin
+# LIBDIR:= ${PREFIX}/lib
+# MANDIR:= ${PREFIX}/share/man/man1
+# CALC_SHAREDIR:= ${PREFIX}/share/calc
+# CALC_INCDIR:= ${PREFIX}/include/calc
+####
 
-# For example, a AddressSanitizer.  You do NOT want to do this by
-# by default!  Do this only if you are debugging with libasan:
+##############################################
+#                                            #
+# SUGGESTION:                                #
+#                                            #
+# Instead of un-commenting stuff below, try: #
+#                                            #
+#       make clobber clang                   #
+#       make clobber gcc                     #
+#       make clobber asan                    #
+#                                            #
+##############################################
+
+####
+# macOS Address Sanitizer (ASAN)
 #
-# For Linux gcc version 4.8.5 with libasan-4.8.5-4 you might try:
+# This comment block was tested under:
 #
-#	CDEBUG:= -O0 -g
-#	CFLAGS+= -fsanitize=address -fno-omit-frame-pointer
-#	LDFLAGS+= -fsanitize=address -fno-omit-frame-pointer
-#	CALC_ENV+= ASAN_OPTIONS=detect_stack_use_after_return=1
+#       macOS 26.2 with Apple clang version 17.0.0 (clang-1700.6.3.2)
 #
-# For macOS 12.1 with clang version 13.0.0 (clang-1300.0.29.30) you might try:
+#       See: https://releases.llvm.org/17.0.1/tools/clang/docs/AddressSanitizer.html
 #
-#	CDEBUG:= -O0 -g
-#	CFLAGS+= -fsanitize=address -fno-omit-frame-pointer -fsanitize=undefined
-#	LDFLAGS+= -fsanitize=address -fno-omit-frame-pointer -fsanitize=undefined
-#	CALC_ENV+= ASAN_OPTIONS=detect_stack_use_after_return=1
+# To use the Address Sanitizer, uncomment this set set of lines and recompile (make clobber all):
+#
+# For more info see: https://github.com/google/sanitizers/wiki/AddressSanitizer
+# See also: https://developer.apple.com/documentation/xcode/diagnosing-memory-thread-and-crash-issues-early
+# And also: https://github.com/google/sanitizers/wiki/AddressSanitizerFlags
+#
+# We recommend, for ease of debugging, building a static calc ("BLD_TYPE= calc-static-only").
+#
+# BLD_TYPE= calc-static-only
+#
+# For macOS, use Homebrew to install via "brew install gcc", and use gcc-15 (NOT gcc):
+#
+# CC:= gcc-15
+# DEBUG:= -O0 -g2
+#
+# For Apple clang and Homebrew gcc version 15:
+#
+# CCWARN+= -Wall
+# CCWARN+= -pedantic
+# CCWARN+= -Werror
+#
+# For Apple clang only:
+#
+# FSANITIZE+= -fsanitize=nullability-arg
+# FSANITIZE+= -fsanitize=nullability-assign
+# FSANITIZE+= -fsanitize=nullability-return
+#
+# CFLAGS+= ${FSANITIZE} -fstack-protector-all
+# LDFLAGS+= ${FSANITIZE}
+# DEBUG:= -ggdb3
+####
+
+####
+# RHEL9 (Linux) Address Sanitizer (ASAN) for i686
+#
+# ####################################################################
+# NOTICE: The i686 will NOT be supported by RHEL starting with RHEL10.
+#         Therefore, unless you are on a RHEL9-like distribution, this
+#         section will NOT work!
+# ####################################################################
+#
+# This comment block was tested under:
+#
+#	RHEL9.7 with clang version 20.1.8 (Red Hat, Inc. 20.1.8-3.el9)
+#
+# with these RPMs installed:
+#
+#	libasan-11.5.0-11.el9.x86_64
+#	libubsan-11.5.0-11.el9.x86_64
+#
+# See the FSANITIZE comment block in Makefile.config for common FSANITIZE values and more info.
+#
+# To use the Address Sanitizer, uncomment this set set of lines and recompile (make clobber all):
+#
+# For more info see: https://github.com/google/sanitizers/wiki/AddressSanitizer
+# And also: https://github.com/google/sanitizers/wiki/AddressSanitizerFlags
+#
+# We recommend, for ease of debugging, building a static calc ("BLD_TYPE= calc-static-only").
+#
+# Be sure you have the following dnf packages installed:
+#
+#   dnf install readline-devel ncurses-libs ncurses-devel libasan libubsan
+#   dnf install readline-devel.i686 ncurses-libs.i686 ncurses-devel.i686 libubsan.i686
+#
+# We recommend, for ease of debugging, building a static calc ("BLD_TYPE= calc-static-only").
+#
+# BLD_TYPE= calc-static-only
+#
+# RHEL9 for i686 only:
+#
+# ARCH_CFLAGS= -march=i686 -m32
+# CCWARN+= -Werror
+# LDFLAGS+= -L/usr/lib
+# CFLAGS+= ${FSANITIZE} -fstack-protector-all
+# LDFLAGS+= ${FSANITIZE}
+# DEBUG:= -O0 -ggdb3
+####
+
+####
+# RHEL (Linux) Address Sanitizer (ASAN)
+#
+# This comment block was tested under:
+#
+#       RHEL9.7 with clang version 20.1.8 (Red Hat, Inc. 20.1.8-3.el9)
+#
+# with these RPMs installed:
+#
+#       libasan-11.5.0-11.el9.x86_64
+#       libubsan-11.5.0-11.el9.x86_64
+#
+# To use the Address Sanitizer, uncomment this set set of lines and recompile (make clobber all):
+#
+# For more info see: https://github.com/google/sanitizers/wiki/AddressSanitizer
+# And also: https://github.com/google/sanitizers/wiki/AddressSanitizerFlags
+#
+# Be sure you have the following dnf packages installed:
+#
+#   dnf install readline-devel ncurses-libs ncurses-devel libasan libubsan
+#
+# We recommend, for ease of debugging, building a static calc ("BLD_TYPE= calc-static-only").
+#
+# BLD_TYPE= calc-static-only
+#
+# For RHEL only:
+#
+# CCWARN+= -Wall
+# CCWARN+= -pedantic
+# CCWARN+= -Werror
+# DEBUG:= -O0 -ggdb3
+#
+# CFLAGS+= ${FSANITIZE} -fstack-protector-all
+# LDFLAGS+= ${FSANITIZE}
+####

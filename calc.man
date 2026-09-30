@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (C) 1999-2007,2014,2018,2021	Landon Curt Noll
+.\" Copyright (C) 1999-2007,2014,2018,2021,2026      Landon Curt Noll
 .\"
 .\" Calc is open software; you can redistribute it and/or modify it under
 .\" the terms of the version 2.1 of the GNU Lesser General Public License
@@ -15,11 +15,11 @@
 .\" received a copy with calc; if not, write to Free Software Foundation, Inc.
 .\" 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 .\"
-.\" Under source code control:	    1991/07/23 05:48:26
-.\" File existed as early as:	    1991
+.\" Under source code control:      1991/07/23 05:48:26
+.\" File existed as early as:       1991
 .\"
-.\" chongo <was here> /\oo/\	http://www.isthe.com/chongo/
-.\" Share and enjoy!  :-)	http://www.isthe.com/chongo/tech/comp/calc/
+.\" chongo <was here> /\oo/\    http://www.isthe.com/chongo/
+.\" Share and enjoy!  :-)       http://www.isthe.com/chongo/tech/comp/calc/
 .\"
 .\" calculator by David I. Bell
 .\" man page by Landon Noll
@@ -221,7 +221,7 @@ The getenv() builtin will still return values, however.
 
 .TP
 .BR \-f " filename"
-This flag is normally only with calc shell scripts.
+This flag is normally only used with calc shell scripts.
 .sp 1
 This flag is required when using calc in
 .BR "shell script mode" .
@@ -470,6 +470,24 @@ The
 flag overrides
 .BR \-i .
 
+.sp 1
+When running calc as a shell script (see
+.B "SHELL SCRIPT MODE"
+for details), calc will close standard input (stdin)
+during startup
+.B UNLESS
+the
+.B \-p
+flag is given on the command line.
+When calc is running in
+.BR "shell script mode" ,
+shell scripts that call the
+.BR prompt (str)
+builtin will not work properly (the prompt builtin
+will always fail) unless the
+.B \-p
+flag is given on the command line.
+
 .TP
 .B \-q
 Disable the reading of the startup scripts.
@@ -501,7 +519,7 @@ version number and exit.
 
 .TP
 .B \-\-
-The double dash indicates to calc that no more option follow.
+The double dash indicates to calc that no more options follow.
 Thus calc will ignore a later argument on the command line
 even if it starts with a dash.
 This is useful when entering negative values on the command line as in:
@@ -543,7 +561,7 @@ will not evaluate any
 arguments but instead make them available
 as strings to the argv() builtin function.
 
-Sufficiently simple commands with no no characters like
+Sufficiently simple commands with no characters like
 parentheses, brackets, semicolons, '*', which have special
 interpretations in UNIX shells may be entered, possibly with
 spaces, until the terminating newline.
@@ -569,7 +587,7 @@ calc -23 + 47
 The first example above fails because the shell interprets the '*'
 as a file glob.
 The second example fails because '\-23' is viewed as a calc option
-(which it is not) and do calc objects to that it thinks of as an unknown option.
+(which it is not) and calc objects to what it thinks of as an unknown option.
 These cases can usually be made to work as expected by
 enclosing the command between quotes:
 .sp 1
@@ -618,7 +636,7 @@ may have to be replaced by:
 .sp 1
 .in +5n
 .nf
-print 27! ^2	or	print 27\\!^2
+print 27! ^2    or      print 27\\!^2
 .fi
 .in -5n
 
@@ -651,7 +669,9 @@ echo chongo was here | calc \-i 'print fgetline(files(0));'
 .fi
 .in -5n
 .sp 1
-This is because without \-p, the interactive parser, in an effort
+This is because without
+.BR \-p ,
+the interactive parser, in an effort
 to parse interactive commands, flushes data on standard input.
 
 .PP
@@ -804,7 +824,7 @@ the rest of the file will be processed in
 Note that
 .B \-s
 .B \-f
-must at the end of the initial ``#!'' line.
+must be at the end of the initial ``#!'' line.
 Any other optional
 .B "optional_other_flags"
 must come before
@@ -932,6 +952,67 @@ whereas
 .sp 1
 will not.
 
+.sp 1
+By default, using calc startup in
+.BR "shell script mode" ,
+calc will close standard input (stdin).
+Thus builtin functions such as
+.BR prompt (str)
+will fail (return a null value).
+Calc shell scripts that call the
+.BR prompt (str)
+builtin will not work properly (the prompt builtin
+will always fail and return a null value) unless the
+.B \-p
+flag is given on the command line.
+
+.sp 1
+The following shell script will always print "got null" because
+stdin will be closed by calc during startup:
+
+.sp 1
+.in +5n
+.nf
+#!/usr/bin/calc \-q \-f
+
+# The prompt will ALWAYS FAIL and return a null value
+n = prompt("Test> ");
+if (isnull(n)) {
+  print("got null");
+} else {
+  print("got " + n);
+}
+.fi
+.in -5n
+.sp 1
+However the following shell script (note the
+.B \-p
+before the
+.B \-f
+in the 1st line) will be interactive, prompt with "Test> " and print
+the "got" result as expected:
+
+.sp 1
+.in +5n
+.nf
+#!/usr/bin/calc \-q \-p \-f
+
+n = prompt("Test> ");
+if (isnull(n)) {
+  print("got null");
+} else {
+  print("got " + n);
+}
+.fi
+.in -5n
+
+.sp 1
+Note in the example above, the
+.B \-p
+flag must be given before the final
+.B \-f
+command line flag.
+
 .PP
 
 .SH DATA TYPES
@@ -973,7 +1054,7 @@ Before a variable is assigned a value it has the value of zero.
 .PP
 The scope of a variable may be global, local to a file, or local to a
 procedure.
-Values may be grouped together in a matrix, or into a
+Values may be grouped together in a matrix, or into
 a list that permits stack and queue style operations.
 .PP
 For more information use the following
@@ -1120,9 +1201,36 @@ A :-separated list of directories used to search for calc
 resource filenames that do not begin with /, ./ or ~.
 .br
 .sp
-Default value: ${CALCPATH}
-.br
-.sp
+If this variable is unset or empty,
+.B calc
+first checks $XDG_DATA_HOME and $XDG_CONFIG_HOME.
+When both name usable absolute directories,
+.B calc
+searches in succession:
+.sp 1
+.in +5n
+.nf
+.
+./cal
+${XDG_DATA_HOME}/calc
+${XDG_CONFIG_HOME}/calc
+${CALC_SHAREDIR}
+${CUSTOMCALDIR}
+.fi
+.in -5n
+.sp 1
+If neither XDG directory is usable, the compiled fallback is usually:
+.sp 1
+.in +5n
+.nf
+.
+./cal
+~/.cal
+${CALC_SHAREDIR}
+${CUSTOMCALDIR}
+.fi
+.in -5n
+.sp 1
 .TP 5
 CALCRC
 On startup (unless \-h or \-q was given on the command
@@ -1132,9 +1240,31 @@ searches for files along this :-separated
 environment variable.
 .br
 .sp
-Default value: ${CALCRC}
-.br
-.sp
+If this variable is unset or empty,
+.B calc
+first checks $XDG_CONFIG_HOME.
+When it names a usable absolute directory,
+.B calc
+searches in succession:
+.sp 1
+.in +5n
+.nf
+./.calcinit
+${XDG_CONFIG_HOME}/calc/calcrc
+${CALC_SHAREDIR}/startup
+.fi
+.in -5n
+.sp 1
+If $XDG_CONFIG_HOME is not usable, the compiled fallback is usually:
+.sp 1
+.in +5n
+.nf
+./.calcinit
+~/.calcrc
+${CALC_SHAREDIR}/startup
+.fi
+.in -5n
+.sp 1
 .TP 5
 CALCBINDINGS
 On startup (unless \fI\-h\fP or \fI\-q\fP was given on the command
@@ -1155,8 +1285,31 @@ In that case, the standard readline mechanisms (see readline(3)) are used.
 CALCHISTFILE
 Location of the calc history file.
 .sp
-Default value: ~/.calc_history
-.sp
+If this variable is unset or empty,
+.B calc
+first uses an existing
+.B ~/.calc_history
+file.
+Otherwise,
+.B calc
+checks $XDG_STATE_HOME.
+When it names a usable absolute writable directory,
+the effective value is:
+.sp 1
+.in +5n
+.nf
+${XDG_STATE_HOME}/calc/history
+.fi
+.in -5n
+.sp 1
+If neither applies, the fallback value is:
+.sp 1
+.in +5n
+.nf
+~/.calc_history
+.fi
+.in -5n
+.sp 1
 This variable is not used if calc was compiled with GNU-readline support.
 .sp
 .TP 5
@@ -1173,6 +1326,45 @@ Default value: ${CUSTOMHELPDIR}
 .sp
 
 .PP
+
+When CALCPATH, CALCRC and CALCHISTFILE are unset or empty,
+.B calc
+follows the XDG Base Directory Specification as described above.
+.sp
+You may override those locations by setting the calc
+environment variables explicitly.  For example, to restore
+the usual legacy defaults on a typical Unix install:
+.sp
+.in +5n
+.nf
+export CALCRC="./.calcinit:$HOME/.calcrc:/usr/share/calc/startup"
+export CALCPATH=".:./cal:$HOME/.cal:/usr/share/calc:/usr/share/calc/custom"
+export CALCHISTFILE="$HOME/.calc_history"
+.fi
+.in -5n
+.sp
+For more information on the XDG Base Directory specification see:
+.sp
+.in +0.5i
+.nf
+https://specifications.freedesktop.org/basedir/latest/
+.fi
+.in -0.5i
+.sp
+Note that
+.B calc
+will attempt to create the parent directory of $CALCHISTFILE.
+If that is not sufficient, you may need to run:
+.sp
+.in +5n
+.nf
+mkdir \-p $(dirname $CALCHISTFILE)
+.fi
+.in -5n
+.sp
+for the history mechanism if you choose a path to a file that
+does not yet exist.
+.sp
 
 .SH CREDIT
 
@@ -1225,6 +1417,7 @@ The calc commands:
 help copyright
 help copying
 help copying-lgpl
+help credit
 .fi
 .in -0.5i
 .sp
@@ -1259,19 +1452,22 @@ Copyright (C) year  David I. Bell, Landon Curt Noll and Ernest Bowen
 Copyright (C) year  Landon Curt Noll
 Copyright (C) year  Ernest Bowen and Landon Curt Noll
 Copyright (C) year  Ernest Bowen
+Copyright (C) year  Petteri Kettunen and Landon Curt Noll
+Copyright (C) year  Christoph Zurnieden
+Copyright (C) year  Landon Curt Noll and Thomas Jones-Low
+Copyright (C) year  Klaus Alexander Seistrup and Landon Curt Noll
 .fi
 .in -0.5i
 .sp
-This man page is:
+A few files in calc are covered under "The Unlicense".
+For more information on this license, see:
 .sp
 .in +0.5i
 .nf
-Copyright (C) 1999-2021  Landon Curt Noll
+https://unlicense.org
 .fi
 .in -0.5i
 .sp
-and is covered under version 2.1 GNU Lesser General
-Public License.
 
 .PP
 
@@ -1279,61 +1475,38 @@ Public License.
 
 .PP
 
-If you have a simple general question about calc, send Email to:
-.sp
-.in +0.5i
-calc-quest-mail at asthe dot com
-.sp
-NOTE: Remove spaces and replace 'at' with @, and 'dot' with .
-.in -0.5i
-.sp
-.in +0.5i
-NOTE: Yes, the Email address uses 'asthe',
-while the web site uses 'isthe'.
-.in -0.5i
-.sp
-.B PLEASE
-put following the
-.B SPECIAL PHRASE
-somewhere in your Email Subject line:
-.sp
-.in +0.5i
-.B calc question
-.in -0.5i
-.sp
-You may add additional words to your subject line.
-.sp
-.B IMPORTANT:
-If your Email doesn't contain the above phrase,
-then we
-.B WILL NOT SEE
-your Email.
-.sp
-.B PLEASE BE SURE
-you have that
-.B SPECIAL PHRASE
-somewhere in the subject line!
-.sp
-.B Suggestion:
-.sp
-.in +0.5i
-From time to time, the Email address and Subject
-.B SPECIAL PHRASE
-may change so verify you have the current info by visiting:
+To ask the calc maintainers a general question about calc,
+see the output of the following calc command:
+
 .sp
 .in +0.5i
 .nf
-http://www.isthe.com/chongo/tech/comp/calc/calc-question.html
+; help question
 .fi
-.in -0.5i
-.in -0.5i
+.in +0.5i
 .sp
-Please limit your questions to general questions about calc.
-We cannot go into great detail in our answers,
-nor can we do your homework, nor can
-we do much more than answer short general questions about calc.
+.PP
+
+or read the source file:
+
 .sp
-Please be patient as we cannot always respond to Email messages quickly.
+.in +0.5i
+.nf
+QUESTIONS
+.fi
+.in +0.5i
+.sp
+
+.PP
+
+or visit the following URL:
+.sp
+.in +0.5i
+.nf
+https://github.com/lcn2/calc/blob/master/QUESTIONS
+.fi
+.in +0.5i
+.sp
 
 .PP
 
@@ -1341,71 +1514,37 @@ Please be patient as we cannot always respond to Email messages quickly.
 
 .PP
 
-Send bug reports and bug fixes to:
+To inform the calc maintainers about a bug, or to submit a bug fix,
+see the output of the following calc command:
+
 .sp
 .in +0.5i
 .nf
-calc-bugrept at asthe dot com
+; help bugs
 .fi
-.sp
-NOTE: Remove spaces and replace 'at' with @, 'dot' with .
-.sp
-NOTE: Yes, the Email address uses 'asthe',
-while the web site uses 'isthe'.
-.in -0.5i
-.sp
-You
-.B MUST
-use following
-.B SPECIAL PHRASE
-in your Email Subject line:
-.sp
 .in +0.5i
-.B calc bug report
-.in -0.5i
 .sp
-You may add additional words to your subject line.
-.sp
-.B Suggestion:
-.sp
-.in +0.5i
-From time to time, the Email address and Subject
-.B SPECIAL PHRASE
-may change so verify you have the current info by visiting:
+.PP
+
+or read the source file:
+
 .sp
 .in +0.5i
 .nf
-http://www.isthe.com/chongo/tech/comp/calc/calc-bugrept.html
+BUGS
 .fi
-.in -0.5i
-.in -0.5i
+.in +0.5i
 .sp
-.B IMPORTANT:
-If your Email doesn't contain the above phrase,
-then we
-.B WILL NOT SEE
-your Email.
-.sp
-.B PLEASE BE SURE
-you have that
-.B SPECIAL PHRASE
-somewhere in the subject line!
-.sp
-See the
-.I BUGS
-source file or use the
-.I calc
-command:
+.PP
+
+or visit the following URL:
 .sp
 .in +0.5i
 .nf
-help bugs
+https://github.com/lcn2/calc/blob/master/BUGS
 .fi
-.in -0.5i
+.in +0.5i
 .sp
-for more information about bug reporting.
-.sp
-Please be patient as we cannot always respond to Email messages quickly.
 
 .PP
 
@@ -1415,126 +1554,40 @@ Please be patient as we cannot always respond to Email messages quickly.
 
 .I Calc
 is open source.
-Contributions of code are welcome.
+You are welcome to contribute code to calc, or submit bug fixes to to calc.
 .sp
-We welcome and encourage you to send us:
-.sp
-.sp
-.in +0.5i
-.nf
-* calc resource files (cal/*.cal)
-* calc shell scripts (cscript/*.calc)
-* builtin functions that you have modified or written, i.e.:
-  assocfunc.c comfunc.c func.c func.h
-  listfunc.c matfunc.c qfunc.c zfunc.c
-* custom functions that you have modified or written (custom/*)
-* help files modified or written (help/*)
-* brief description of you added, fixed, improved in CHANGES
-* regression test cases (cal/regress.cal)
-* Makefile improvements (Makefile, */Makefile)
-* other source code modifications (*.c, *.h)
-* etc. (* */* :) )
-.fi
-.in -0.5i
-.sp
-If you add functionality to calc, please be sure to modify/patch/add
-Makefiles, help files, cal/regress.cal test code as well.
-Regression test cases are vital to maintaining calc's level
-of correctness and helps us avoid code bug regression.
-.sp
-In order to consider integrating your code, we need:
-.sp
-.nf
-.in +0.5i
-* calc version you are working with (please try use the latest version)
-* new help files or help file patches, if applicable (documentation)
-* proposed text for the CHANGES file (brief description of what it does)
-* regress.cal test patch as needed
-* your source code and/or source code changes (:-))
-.in -0.5i
-.fi
-.sp
-The best way to send us new code, if your changes are small, is
-via a patch (diff -c from the latest alpha code to your code).
-If your change is large, you should send entire files (either
-as a diff -c /dev/null your-file patch, or as a uuencoded and
-gziped (or compressed) tar file).
-.sp
-Please try to generate a patch against the most recent
-version of calc, and if you use GitHub, the top of the
-master branch:
-.sp
-.nf
-.in +0.5i
-https://github.com/lcn2/calc
-.in -0.5i
-.fi
-.sp
-.sp
-The best way contribute to calc bug is to generate calc
-GitHub pull request:
-.sp
-.nf
-.in +0.5i
-https://github.com/lcn2/calc/pulls
-.in -0.5i
-.fi
-.sp
-Your code needs to be contributed under either the 2.1 of the
-.B GNU Lesser General Public License (LGPL 2.1)
-or be in the public domain.
-.sp
-If you do not want to use calc GitHub, then send Email to:
+To contribute code to calc, please see see the output of
+the following calc command:
+
 .sp
 .in +0.5i
 .nf
-calc-contrib at asthe dot com
+; help contrib
 .fi
-.sp
-NOTE: Remove spaces and replace 'at' with @, 'dot' with .
-.sp
-NOTE: Yes, the Email address uses 'asthe',
-while the web site uses 'isthe'.
-.in -0.5i
-.sp
-You
-.B MUST
-use following
-.B SPECIAL PHRASE
-in your Email Subject line:
-.sp
 .in +0.5i
-.B calc contribution
-.in -0.5i
 .sp
-You may add additional words to your subject line.
-.sp
-.B Suggestion:
-.sp
-.in +0.5i
-From time to time, the Email address and Subject
-.B SPECIAL PHRASE
-may change so verify you have the current info by visiting:
+
+.PP
+
+or read the source file:
+
 .sp
 .in +0.5i
 .nf
-http://www.isthe.com/chongo/tech/comp/calc/calc-contrib.html
+CONTRIB-CODE
 .fi
-.in -0.5i
-.in -0.5i
+.in +0.5i
+
+.PP
+
+or visit the following URL:
 .sp
-.B IMPORTANT:
-If your Email doesn't contain the above phrase,
-then we
-.B WILL NOT SEE
-your Email.
+.in +0.5i
+.nf
+https://github.com/lcn2/calc/blob/master/CONTRIB-CODE
+.fi
+.in +0.5i
 .sp
-.B PLEASE BE SURE
-you have that
-.B SPECIAL PHRASE
-somewhere in the subject line!
-.sp
-Please be patient as we cannot always respond to Email messages quickly.
 
 .PP
 
@@ -1549,5 +1602,30 @@ web site is located at:
 .in +0.5i
 www.isthe.com/chongo/tech/comp/calc/
 .in -0.5i
+
+.SH "CALC SOURCE CODE"
+
+The latest version of calc source code may be obtained at
+the following GitHub repo:
 .sp
-Share and Enjoy! :\-)
+.in +0.5i
+https://github.com/lcn2/calc
+.in -0.5i
+.sp
+The very latest calc source is found at the top master branch.
+
+.PP
+
+You may download the calc releases from:
+.sp
+.in +0.5i
+https://github.com/lcn2/calc/releases
+.in -0.5i
+.sp
+The releases marked
+.B ((Pre-release))
+are beta releases.
+.sp
+The most recent release that is NOT  marked
+.B ((Pre-release))
+is the recommended stable release.
